@@ -1,0 +1,2 @@
+move_base_msgs:unitree_guide/unitree_actuator_sdk/unitree_motor_ctrl:unitree_guide/unitree_guide:unitree_guide/unitree_move_base:unitree_ros-master/robots/go1_description:unitree_ros-master/unitree_controller:unitree_ros-master/unitree_gazebo:unitree_ros-master/unitree_legged_control:unitree_ros_to_real/unitree_legged_msgs
+-DCATKIN_DEVEL_PREFIX=/home/zzf/RL/unitree_rl/devel -DCMAKE_INSTALL_PREFIX=/home/zzf/RL/unitree_rl/install -G Unix Makefiles

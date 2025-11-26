@@ -1,0 +1,8 @@
+prefix=/home/zzf/RL/unitree_rl/devel
+
+Name: move_base_msgs
+Description: Description of move_base_msgs
+Version: 1.11.16
+Cflags: -I/home/zzf/RL/unitree_rl/devel/include
+Libs: -L${prefix}/lib 
+Requires: 

@@ -11,8 +11,12 @@ set(DEBUG OFF)              # Use debug functions or not, ON or OFF
 set(MOVE_BASE OFF)               # Need move_base or not, ON or OFF 
 
 set(use_Torch ON)
+
+add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)
+
+
 if(use_Torch)
-    set(Torch_DIR /yourpath/libtorch/share/cmake/Torch)  # set libtorch path
+    set(Torch_DIR /home/zzf/install_source/libtorch-shared-with-deps-1.13.0+cpu/libtorch/share/cmake/Torch)  # set libtorch path
     find_package(Torch REQUIRED)
     
     set(BODY_MODEL_PATH "${CMAKE_CURRENT_SOURCE_DIR}/model/body.jit")
@@ -74,9 +78,9 @@ if(CATKIN_MAKE)
     endif()
 
     find_package(catkin REQUIRED COMPONENTS
+        roscpp
         genmsg
         robot_state_publisher
-        roscpp
         std_msgs
         tf
         geometry_msgs
@@ -144,7 +148,16 @@ if(use_Torch)
     target_link_libraries(junior_ctrl ${TORCH_LIBRARIES})
 endif()
 if(CATKIN_MAKE)
-    target_link_libraries(junior_ctrl ${catkin_LIBRARIES})
+    target_link_libraries(junior_ctrl
+        ${catkin_LIBRARIES}
+        # 手动添加所有必要的 ROS 库
+        # /opt/ros/noetic/lib/libroscpp.so
+        # /opt/ros/noetic/lib/librosconsole.so
+        # /opt/ros/noetic/lib/libroscpp_serialization.so
+        # /opt/ros/noetic/lib/librostime.so
+        # /opt/ros/noetic/lib/libxmlrpcpp.so
+        # /opt/ros/noetic/lib/libcpp_common.so
+    )
     add_dependencies(junior_ctrl ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 endif()
 if(DEBUG)
