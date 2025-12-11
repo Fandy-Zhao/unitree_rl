@@ -1,0 +1,8 @@
+prefix=/home/zzf/RL/unitree_rl/devel
+
+Name: depth_process
+Description: Description of depth_process
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: roscpp rospy sensor_msgs cv_bridge image_transport std_msgs geometry_msgs

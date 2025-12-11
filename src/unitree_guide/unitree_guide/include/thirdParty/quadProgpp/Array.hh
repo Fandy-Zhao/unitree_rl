@@ -1968,7 +1968,7 @@ int lu(const Matrix<T>& A, Matrix<T>& LU, Vector<unsigned int>& index)
 }
 
 template <typename T>
-Vector<T> lu_solve(const Matrix<T>& LU, const Vector<T>& b, Vector<unsigned int>& index)
+Vector<T> rl_lu_solve(const Matrix<T>& LU, const Vector<T>& b, Vector<unsigned int>& index)
 {
   if (LU.ncols() != LU.nrows())
     throw std::logic_error("Error in LU solve: LU matrix should be squared");
@@ -2002,9 +2002,9 @@ Vector<T> lu_solve(const Matrix<T>& LU, const Vector<T>& b, Vector<unsigned int>
 }
 
 template <typename T>
-void lu_solve(const Matrix<T>& LU, Vector<T>& x, const Vector<T>& b, Vector<unsigned int>& index)
+void rl_lu_solve(const Matrix<T>& LU, Vector<T>& x, const Vector<T>& b, Vector<unsigned int>& index)
 {
-  x = lu_solve(LU, b, index);
+  x = rl_lu_solve(LU, b, index);
 }
 
 template <typename T>
@@ -2021,7 +2021,7 @@ Matrix<T> lu_inverse(const Matrix<T>& A)
   for (unsigned i = 0; i < n; i++)
     {
       e.reset(i);
-      A1.setColumn(i, lu_solve(LU, e, index));
+      A1.setColumn(i, rl_lu_solve(LU, e, index));
     }
 	
   return A1;
@@ -2166,7 +2166,7 @@ Vector<T> backward_elimination(const Matrix<T>& U, const Vector<T> y)
 
 #define det lu_det
 #define inverse lu_inverse
-#define solve lu_solve
+#define solve rl_lu_solve
 
 /* Random */
 

@@ -25,6 +25,10 @@ public:
     FSMStateName checkChange();
 
 private:
+
+    long long total=0;
+    long long success=0;
+
     float _targetPos_rl[12];  // 下发给电机的目标关节角度
     float _last_targetPos_rl[12];  // 上一次下发给电机的目标关节角度
     const float _default_dof_pos[12] = {-0.1, 0.8, -1.5, // FR

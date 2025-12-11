@@ -1,0 +1,8 @@
+prefix=/home/zzf/RL/unitree_rl/install
+
+Name: rl
+Description: Description of rl
+Version: 0.0.0
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib 
+Requires: cv_bridge geometry_msgs image_transport roscpp rospy sensor_msgs std_msgs

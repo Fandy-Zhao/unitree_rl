@@ -101,6 +101,7 @@ void State_RL::_observations_compute()
                                 _action.view({1, -1})}, -1);
     //std::cout<<"obs shape: "<<_observation.sizes()<<std::endl;
     this->_observation = torch::clamp(this->_observation, -clip_observations, clip_observations);
+    
 }
 
 void State_RL::_getUserCmd(){
@@ -187,7 +188,7 @@ void State_RL::_inferenceLoop() {  // 模型推理线程
         _start_RL_Time = getSystemTime();  // 记录开始执行的系统时间
         _obs_buffer_update(); // 更新一次观测buffer
 
-        // long long obs_Time = getSystemTime();
+        long long obs_Time = getSystemTime();
         // std::cout << "obs compute time: " << obs_Time-_start_RL_Time << std::endl;
         
         {  // 作用域界定，用于控制下面第一行的生命周期，锁会在之后由析构函数释放
@@ -195,12 +196,18 @@ void State_RL::_inferenceLoop() {  // 模型推理线程
             _action_compute(); // 执行模型推理
         }
 
-        // long long action_Time = getSystemTime();
-        // std::cout << "action compute time: " << action_Time-_start_RL_Time << std::endl;
+        long long action_Time = getSystemTime();
+        // std::cout << "action compute time: " << action_Time-_start_RL_Time << " us"<< "频率: "<< 1000000.0/(action_Time-_start_RL_Time) << " Hz"<< std::endl;
 
         _inferenceReady = true;
         this->_percent_1 = 0;
-        absoluteWait(_start_RL_Time, (long long)(this->_RL_dt * 1000000));  // 绝对等待，保证控制周期，即线程频率50hz
+        total++;
+        if(absoluteWait(_start_RL_Time, (long long)(this->_RL_dt * 1000000)))  // 绝对等待，保证控制周期，即线程频率50hz)
+        {
+            success++;
+        }
+        std::cout << "success rate: " << (double)success/(double)total << std::endl;
+
     }
 }
 

@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.14)
 project(unitree_guide)
 
+# if(CMAKE_COMPILER_IS_GNUCXX)
+#     add_compile_options(-D_GLIBCXX_USE_CXX11_ABI=1)
+#     message(STATUS "Add compile option -D_GLIBCXX_USE_CXX11_ABI=1")
+# endif()
+
 set(ROBOT_TYPE Go1)         # The type of robot, support A1 Go1 Go2
 set(PLATFORM amd64)         # The platform to compile, support amd64 and arm64
 
@@ -12,11 +17,11 @@ set(MOVE_BASE OFF)               # Need move_base or not, ON or OFF
 
 set(use_Torch ON)
 
-add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)
+add_definitions(-D_GLIBCXX_USE_CXX11_ABI=1)
 
 
 if(use_Torch)
-    set(Torch_DIR /home/zzf/install_source/libtorch-shared-with-deps-1.13.0+cpu/libtorch/share/cmake/Torch)  # set libtorch path
+    set(Torch_DIR /home/zzf/install_source/Libtorch/libtorch-cxx11-abi-shared-with-deps-1.10.0+cpu/libtorch/share/cmake/Torch)  # set libtorch path
     find_package(Torch REQUIRED)
     
     set(BODY_MODEL_PATH "${CMAKE_CURRENT_SOURCE_DIR}/model/body.jit")
@@ -52,6 +57,8 @@ if(SIMULATION OR MOVE_BASE)
 endif()
 
 set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 find_package(Boost)
 
 if(CATKIN_MAKE)
@@ -78,13 +85,16 @@ if(CATKIN_MAKE)
     endif()
 
     find_package(catkin REQUIRED COMPONENTS
-        roscpp
         genmsg
         robot_state_publisher
+        roscpp
         std_msgs
         tf
         geometry_msgs
         unitree_legged_msgs
+        rosconsole 
+        rospy       
+        roslib
     )
     catkin_package(
         CATKIN_DEPENDS 
@@ -144,21 +154,40 @@ file(GLOB_RECURSE SRC_LIST
 )
 
 add_executable(junior_ctrl src/main.cpp ${SRC_LIST})
-if(use_Torch)
-    target_link_libraries(junior_ctrl ${TORCH_LIBRARIES})
-endif()
+# if(use_Torch)
+#     target_link_libraries(junior_ctrl ${TORCH_LIBRARIES})
+# endif()
 if(CATKIN_MAKE)
+
+    # find_library(ROS_LIB_ROSCPP roscpp)
+    # find_library(ROS_LIB_ROSCOMMON roscommon)
+    # find_library(ROS_LIB_ROSCONSOLE rosconsole)
+    # find_library(ROS_LIB_ROSCPP_SERIALIZATION roscpp_serialization)
+    # find_library(ROS_LIB_ROSLOG roslog)
+    
+    # message(STATUS "Found roscpp: ${ROS_LIB_ROSCPP}")
+    # message(STATUS "Found roscommon: ${ROS_LIB_ROSCOMMON}")
+    # message(STATUS "Found rosconsole: ${ROS_LIB_ROSCONSOLE}")
+
+    link_directories(/opt/ros/noetic/lib)
+
     target_link_libraries(junior_ctrl
         ${catkin_LIBRARIES}
-        # 手动添加所有必要的 ROS 库
-        # /opt/ros/noetic/lib/libroscpp.so
-        # /opt/ros/noetic/lib/librosconsole.so
-        # /opt/ros/noetic/lib/libroscpp_serialization.so
-        # /opt/ros/noetic/lib/librostime.so
-        # /opt/ros/noetic/lib/libxmlrpcpp.so
-        # /opt/ros/noetic/lib/libcpp_common.so
+        ${TORCH_LIBRARIES}
+        -pthread 
+        lcm
+        /opt/ros/noetic/lib/libroscpp.so
+        /opt/ros/noetic/lib/librosconsole.so
+        /opt/ros/noetic/lib/librosconsole_log4cxx.so
+        /opt/ros/noetic/lib/librosconsole_backend_interface.so
+        /opt/ros/noetic/lib/libroscpp_serialization.so
+        /opt/ros/noetic/lib/librostime.so
+        /opt/ros/noetic/lib/libcpp_common.so
     )
     add_dependencies(junior_ctrl ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+    set_property(TARGET junior_ctrl PROPERTY CXX_STANDARD 14)
+
+    target_compile_options(junior_ctrl PRIVATE ${Torch_CXX_FLAGS})
 endif()
 if(DEBUG)
     target_include_directories(junior_ctrl PRIVATE ${Python2_INCLUDE_DIRS} ${Python2_NumPy_INCLUDE_DIRS})
@@ -177,7 +206,7 @@ if(REAL_ROBOT)
             target_link_libraries(junior_ctrl unitree_sdk2 ddsc ddscxx rt pthread)
     endif()
 endif()
-target_link_libraries(junior_ctrl -pthread lcm)
+# target_link_libraries(junior_ctrl -pthread lcm)
 
 if(NOT CATKIN_MAKE)
     set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)

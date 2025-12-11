@@ -1121,6 +1121,32 @@ move_base_msgs_genpy/fast:
 .PHONY : move_base_msgs_genpy/fast
 
 #=============================================================================
+# Target rules for targets named depth_process
+
+# Build rule for target.
+depth_process: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 depth_process
+.PHONY : depth_process
+
+# fast build rule for target.
+depth_process/fast:
+	$(MAKE) $(MAKESILENT) -f depth_process/CMakeFiles/depth_process.dir/build.make depth_process/CMakeFiles/depth_process.dir/build
+.PHONY : depth_process/fast
+
+#=============================================================================
+# Target rules for targets named test_node
+
+# Build rule for target.
+test_node: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_node
+.PHONY : test_node
+
+# fast build rule for target.
+test_node/fast:
+	$(MAKE) $(MAKESILENT) -f depth_process/CMakeFiles/test_node.dir/build.make depth_process/CMakeFiles/test_node.dir/build
+.PHONY : test_node/fast
+
+#=============================================================================
 # Target rules for targets named unitree_legged_msgs_generate_messages
 
 # Build rule for target.
@@ -2061,11 +2087,13 @@ help:
 	@echo "... visualization_msgs_generate_messages_lisp"
 	@echo "... visualization_msgs_generate_messages_nodejs"
 	@echo "... visualization_msgs_generate_messages_py"
+	@echo "... depth_process"
 	@echo "... gmock"
 	@echo "... gmock_main"
 	@echo "... gtest"
 	@echo "... gtest_main"
 	@echo "... junior_ctrl"
+	@echo "... test_node"
 	@echo "... unitreeDrawForcePlugin"
 	@echo "... unitreeFootContactPlugin"
 	@echo "... unitree_controller"

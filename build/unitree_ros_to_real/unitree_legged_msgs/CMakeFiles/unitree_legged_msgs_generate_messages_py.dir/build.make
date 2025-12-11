@@ -103,10 +103,10 @@ unitree_ros_to_real/unitree_legged_msgs/CMakeFiles/unitree_legged_msgs_generate_
 
 /home/zzf/RL/unitree_rl/devel/lib/python3/dist-packages/unitree_legged_msgs/msg/_HighState.py: /opt/ros/noetic/lib/genpy/genmsg_py.py
 /home/zzf/RL/unitree_rl/devel/lib/python3/dist-packages/unitree_legged_msgs/msg/_HighState.py: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/HighState.msg
-/home/zzf/RL/unitree_rl/devel/lib/python3/dist-packages/unitree_legged_msgs/msg/_HighState.py: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/MotorState.msg
 /home/zzf/RL/unitree_rl/devel/lib/python3/dist-packages/unitree_legged_msgs/msg/_HighState.py: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/IMU.msg
-/home/zzf/RL/unitree_rl/devel/lib/python3/dist-packages/unitree_legged_msgs/msg/_HighState.py: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/BmsState.msg
 /home/zzf/RL/unitree_rl/devel/lib/python3/dist-packages/unitree_legged_msgs/msg/_HighState.py: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/Cartesian.msg
+/home/zzf/RL/unitree_rl/devel/lib/python3/dist-packages/unitree_legged_msgs/msg/_HighState.py: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/MotorState.msg
+/home/zzf/RL/unitree_rl/devel/lib/python3/dist-packages/unitree_legged_msgs/msg/_HighState.py: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/BmsState.msg
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/zzf/RL/unitree_rl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Generating Python from MSG unitree_legged_msgs/HighState"
 	cd /home/zzf/RL/unitree_rl/build/unitree_ros_to_real/unitree_legged_msgs && ../../catkin_generated/env_cached.sh /usr/bin/python3 /opt/ros/noetic/share/genpy/cmake/../../../lib/genpy/genmsg_py.py /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/HighState.msg -Iunitree_legged_msgs:/home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg -Istd_msgs:/opt/ros/noetic/share/std_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/noetic/share/geometry_msgs/cmake/../msg -Isensor_msgs:/opt/ros/noetic/share/sensor_msgs/cmake/../msg -p unitree_legged_msgs -o /home/zzf/RL/unitree_rl/devel/lib/python3/dist-packages/unitree_legged_msgs/msg
 
@@ -122,17 +122,17 @@ unitree_ros_to_real/unitree_legged_msgs/CMakeFiles/unitree_legged_msgs_generate_
 
 /home/zzf/RL/unitree_rl/devel/lib/python3/dist-packages/unitree_legged_msgs/msg/_LowCmd.py: /opt/ros/noetic/lib/genpy/genmsg_py.py
 /home/zzf/RL/unitree_rl/devel/lib/python3/dist-packages/unitree_legged_msgs/msg/_LowCmd.py: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/LowCmd.msg
-/home/zzf/RL/unitree_rl/devel/lib/python3/dist-packages/unitree_legged_msgs/msg/_LowCmd.py: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/BmsCmd.msg
 /home/zzf/RL/unitree_rl/devel/lib/python3/dist-packages/unitree_legged_msgs/msg/_LowCmd.py: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/MotorCmd.msg
+/home/zzf/RL/unitree_rl/devel/lib/python3/dist-packages/unitree_legged_msgs/msg/_LowCmd.py: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/BmsCmd.msg
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/zzf/RL/unitree_rl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Generating Python from MSG unitree_legged_msgs/LowCmd"
 	cd /home/zzf/RL/unitree_rl/build/unitree_ros_to_real/unitree_legged_msgs && ../../catkin_generated/env_cached.sh /usr/bin/python3 /opt/ros/noetic/share/genpy/cmake/../../../lib/genpy/genmsg_py.py /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/LowCmd.msg -Iunitree_legged_msgs:/home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg -Istd_msgs:/opt/ros/noetic/share/std_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/noetic/share/geometry_msgs/cmake/../msg -Isensor_msgs:/opt/ros/noetic/share/sensor_msgs/cmake/../msg -p unitree_legged_msgs -o /home/zzf/RL/unitree_rl/devel/lib/python3/dist-packages/unitree_legged_msgs/msg
 
 /home/zzf/RL/unitree_rl/devel/lib/python3/dist-packages/unitree_legged_msgs/msg/_LowState.py: /opt/ros/noetic/lib/genpy/genmsg_py.py
 /home/zzf/RL/unitree_rl/devel/lib/python3/dist-packages/unitree_legged_msgs/msg/_LowState.py: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/LowState.msg
-/home/zzf/RL/unitree_rl/devel/lib/python3/dist-packages/unitree_legged_msgs/msg/_LowState.py: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/MotorState.msg
 /home/zzf/RL/unitree_rl/devel/lib/python3/dist-packages/unitree_legged_msgs/msg/_LowState.py: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/IMU.msg
-/home/zzf/RL/unitree_rl/devel/lib/python3/dist-packages/unitree_legged_msgs/msg/_LowState.py: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/BmsState.msg
 /home/zzf/RL/unitree_rl/devel/lib/python3/dist-packages/unitree_legged_msgs/msg/_LowState.py: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/Cartesian.msg
+/home/zzf/RL/unitree_rl/devel/lib/python3/dist-packages/unitree_legged_msgs/msg/_LowState.py: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/MotorState.msg
+/home/zzf/RL/unitree_rl/devel/lib/python3/dist-packages/unitree_legged_msgs/msg/_LowState.py: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/BmsState.msg
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/zzf/RL/unitree_rl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Generating Python from MSG unitree_legged_msgs/LowState"
 	cd /home/zzf/RL/unitree_rl/build/unitree_ros_to_real/unitree_legged_msgs && ../../catkin_generated/env_cached.sh /usr/bin/python3 /opt/ros/noetic/share/genpy/cmake/../../../lib/genpy/genmsg_py.py /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/LowState.msg -Iunitree_legged_msgs:/home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg -Istd_msgs:/opt/ros/noetic/share/std_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/noetic/share/geometry_msgs/cmake/../msg -Isensor_msgs:/opt/ros/noetic/share/sensor_msgs/cmake/../msg -p unitree_legged_msgs -o /home/zzf/RL/unitree_rl/devel/lib/python3/dist-packages/unitree_legged_msgs/msg
 
