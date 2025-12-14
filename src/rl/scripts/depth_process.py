@@ -20,7 +20,7 @@ from torch.autograd import Variable
 # from rsl_rl import modules
 
 import pyrealsense2 as rs
-import cv2
+# import cv2
 import ros_numpy   
 import ros_numpy as rnp
 import random
@@ -385,8 +385,8 @@ class VisualHandlerNode:
             self.publish_depth_data(depth_image_pyt)
             #转换成图像
             depth_image = depth_image_pyt[0].numpy() * 255
-            cv2.imshow("depth image", depth_image.astype(np.uint8))
-            cv2.waitKey(10)
+            # cv2.imshow("depth image", depth_image.astype(np.uint8))
+            # cv2.waitKey(10)
         else:
             rospy.logwarn("One frame of depth latent if not acquired")
 

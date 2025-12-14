@@ -14,6 +14,12 @@
 #include <vector>
 #include <algorithm>
 
+#include "unitree_legged_msgs/LowState.h"
+#include "unitree_legged_msgs/LowCmd.h"
+
+
+
+
 class State_RL : public FSMState
 {
 public:
@@ -22,9 +28,20 @@ public:
     void enter();
     void run();
     void exit();
+    void init_pub_sub();
+    void send_low_state();
+    void extreme_run();
+    void lowCmdCallback(const unitree_legged_msgs::LowCmd::ConstPtr& msg);
+
     FSMStateName checkChange();
 
 private:
+
+    ros::NodeHandle _nm;
+    ros::Publisher _lowState_pub;
+    unitree_legged_msgs::LowState lowState_rl;
+    ros::Subscriber _lowCmd_sub;
+    // unitree_legged_msgs::LowCmd lowCmd_rl;
 
     long long total=0;
     long long success=0;
@@ -49,6 +66,7 @@ private:
     void _inferenceLoop();  // 模型推理循环函数，在一个独立的线程中执行
     long long _start_RL_Time;  // 记录线程启动时间
     const double _RL_dt = 0.02; // RL控制频率50hz
+
 
     // RL推理
     void _loadPolicy();

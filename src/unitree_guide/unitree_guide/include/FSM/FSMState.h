@@ -4,6 +4,7 @@
 #ifndef FSMSTATE_H
 #define FSMSTATE_H
 
+#include <ros/ros.h>
 #include <string>
 #include <iostream>
 #include <unistd.h>
@@ -15,6 +16,9 @@
 #include "common/mathTypes.h"
 #include "common/timeMarker.h"
 #include "interface/CmdPanel.h"
+
+
+
 
 class FSMState{
 public:

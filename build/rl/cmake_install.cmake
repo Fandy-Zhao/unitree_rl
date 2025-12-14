@@ -61,3 +61,7 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/rl" TYPE PROGRAM FILES "/home/zzf/RL/unitree_rl/build/rl/catkin_generated/installspace/depth_process.py")
 endif()
 
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/rl" TYPE PROGRAM FILES "/home/zzf/RL/unitree_rl/build/rl/catkin_generated/installspace/action.py")
+endif()
+

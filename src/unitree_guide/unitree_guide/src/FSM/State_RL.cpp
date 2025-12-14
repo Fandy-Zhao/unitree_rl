@@ -5,6 +5,8 @@
 #include "FSM/State_RL.h"
 
 #include <fstream>
+
+
 void saveArrayToFile(const float actions[], size_t size, const std::string& filename) {
     std::ofstream file(filename, std::ios::app);
     if (file.is_open()) {
@@ -26,6 +28,8 @@ State_RL::State_RL(CtrlComponents *ctrlComp)
         this->_vxLim = _robModel->getRobVelLimitX();  // 速度限幅
         this->_vyLim = _robModel->getRobVelLimitY();
         this->_wyawLim = _robModel->getRobVelLimitYaw();
+
+        
 }
 
 void State_RL::_init_buffers()
@@ -162,22 +166,25 @@ void State_RL::enter()
         this->_joint_q[i] = this->_default_dof_pos[i];
     }
 
-    _init_buffers(); // 初始化参数
-    _loadPolicy();  // 刚进入RL状态时先加载模型
+    // _init_buffers(); // 初始化参数
+    // _loadPolicy();  // 刚进入RL状态时先加载模型
 
-    // 初始化_obs_buffer_tensor，并获取满足历史时间步长度的观测buffer
-    this->_obs_buffer_tensor = torch::zeros({1, this->_num_obs_history*_num_obs});
-    _action = torch::zeros({1, 12});
-    for (int i = 0; i < this->_num_obs_history; ++i) {
-        _obs_buffer_update(); // 更新初始的观测buffer
-    }
+    // // 初始化_obs_buffer_tensor，并获取满足历史时间步长度的观测buffer
+    // this->_obs_buffer_tensor = torch::zeros({1, this->_num_obs_history*_num_obs});
+    // _action = torch::zeros({1, 12});
+    // for (int i = 0; i < this->_num_obs_history; ++i) {
+    //     _obs_buffer_update(); // 更新初始的观测buffer
+    // }
 
-    // 启动线程
-    _threadRunning = true;  // 线程循环启动
-    _inferenceReady = false; // 推理完成标志位
-    if (!_inferenceThread.joinable()) {  // joinable检查线程是否在执行中，执行中会返回true。
-        _inferenceThread = std::thread(&State_RL::_inferenceLoop, this);  // 创建线程
-    }
+    // // 启动线程
+    // _threadRunning = true;  // 线程循环启动
+    // _inferenceReady = false; // 推理完成标志位
+    // if (!_inferenceThread.joinable()) {  // joinable检查线程是否在执行中，执行中会返回true。
+    //     _inferenceThread = std::thread(&State_RL::_inferenceLoop, this);  // 创建线程
+    // }
+
+    // 初始化
+    this->init_pub_sub();
 }
 
 void State_RL::_inferenceLoop() {  // 模型推理线程
@@ -215,26 +222,29 @@ void State_RL::run()
 {
     // 以500hz实时发送关节角度
     // 互斥锁防止数据访问冲突
-    if (_inferenceReady) {
-        std::lock_guard<std::mutex> lock(_mutex);
-        // 使用推理结果
-        memcpy(this->_targetPos_rl, this->_joint_q, sizeof(this->_joint_q));
-        _inferenceReady = false;
-    }
+    // if (_inferenceReady) {
+        // std::lock_guard<std::mutex> lock(_mutex);
+        // // 使用推理结果
+        // memcpy(this->_targetPos_rl, this->_joint_q, sizeof(this->_joint_q));
+        // _inferenceReady = false;
+    // }
 
-    this->_percent_1 += (float)1 / this->_duration_1;
-    this->_percent_1 = this->_percent_1 > 1 ? 1 : this->_percent_1;
-    for (int j = 0; j < 12; j++)  // 跟上一次的位置平滑滤波
-    {
-        _lowCmd->motorCmd[j].mode = 10;
-        _lowCmd->motorCmd[j].q = (1 - this->_percent_1) * this->_last_targetPos_rl[j] + this->_percent_1 * this->_targetPos_rl[j];
-        _lowCmd->motorCmd[j].dq = 0;
-        _lowCmd->motorCmd[j].Kp = this->Kp;  // TODO: 记得改一下值
-        _lowCmd->motorCmd[j].Kd = this->Kd;
-        _lowCmd->motorCmd[j].tau = 0;
+    // this->_percent_1 += (float)1 / this->_duration_1;
+    // this->_percent_1 = this->_percent_1 > 1 ? 1 : this->_percent_1;
+    // for (int j = 0; j < 12; j++)  // 跟上一次的位置平滑滤波
+    // {
+    //     _lowCmd->motorCmd[j].mode = 10;
+    //     _lowCmd->motorCmd[j].q = (1 - this->_percent_1) * this->_last_targetPos_rl[j] + this->_percent_1 * this->_targetPos_rl[j];
+    //     _lowCmd->motorCmd[j].dq = 0;
+    //     _lowCmd->motorCmd[j].Kp = this->Kp;  // TODO: 记得改一下值
+    //     _lowCmd->motorCmd[j].Kd = this->Kd;
+    //     _lowCmd->motorCmd[j].tau = 0;
 
-        this->_last_targetPos_rl[j] = _targetPos_rl[j];
-    }
+    //     this->_last_targetPos_rl[j] = _targetPos_rl[j];
+    // }
+
+    this->send_low_state();
+
 }
 
 void State_RL::exit()
@@ -258,4 +268,58 @@ FSMStateName State_RL::checkChange()
     else{  // 否则保持RL
         return FSMStateName::RL;
     }
+}
+
+
+
+void State_RL::init_pub_sub()
+{
+    this->_lowState_pub = _nm.advertise<unitree_legged_msgs::LowState>("/rl/lowstate", 1);
+
+    this->_lowCmd_sub = _nm.subscribe<unitree_legged_msgs::LowCmd>("/rl/lowcmd", 1, &State_RL::lowCmdCallback, this);
+}
+
+
+void State_RL::send_low_state()
+{
+    lowState_rl.imu.quaternion[0] = _lowState->imu.quaternion[0];
+    lowState_rl.imu.quaternion[1] = _lowState->imu.quaternion[1];
+    lowState_rl.imu.quaternion[2] = _lowState->imu.quaternion[2];
+    lowState_rl.imu.quaternion[3] = _lowState->imu.quaternion[3];
+
+    for(int i=0;i<3;i++){
+        lowState_rl.imu.gyroscope[i]    = _lowState->imu.gyroscope[i];
+        lowState_rl.imu.accelerometer[i]= _lowState->imu.accelerometer[i];
+    }
+
+
+    for(int i=0;i<12;i++){
+        lowState_rl.motorState[i].mode = _lowState->motorState[i].mode;
+        lowState_rl.motorState[i].q    = _lowState->motorState[i].q;
+        lowState_rl.motorState[i].dq   = _lowState->motorState[i].dq;
+        lowState_rl.motorState[i].tauEst  = _lowState->motorState[i].tauEst;
+    }
+    lowState_rl.wirelessRemote[0] = _lowState->userValue.ly;
+    lowState_rl.wirelessRemote[1] = _lowState->userValue.lx;
+    lowState_rl.wirelessRemote[2] = _lowState->userValue.rx;
+        
+    this->_lowState_pub.publish(this->lowState_rl);
+}
+
+void State_RL::lowCmdCallback(const unitree_legged_msgs::LowCmd::ConstPtr& msg)
+{
+    // 从msg中提取数据并赋值给_lowCmd_rl
+    for(int i(0); i < 12; ++i){
+        _lowCmd->motorCmd[i].mode = msg->motorCmd[i].mode;
+        _lowCmd->motorCmd[i].q = msg->motorCmd[i].q;  
+        _lowCmd->motorCmd[i].dq = msg->motorCmd[i].dq;
+        _lowCmd->motorCmd[i].tau = msg->motorCmd[i].tau;
+        _lowCmd->motorCmd[i].Kd = msg->motorCmd[i].Kd;
+        _lowCmd->motorCmd[i].Kp = msg->motorCmd[i].Kp;
+    }
+}
+
+void State_RL::extreme_run()
+{
+    
 }

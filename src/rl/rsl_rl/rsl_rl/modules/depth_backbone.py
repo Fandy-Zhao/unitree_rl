@@ -10,12 +10,15 @@ class RecurrentDepthBackbone(nn.Module):
         last_activation = nn.Tanh()
         self.base_backbone = base_backbone
         if env_cfg == None:
+            self.model_device = "gpu"
             self.combination_mlp = nn.Sequential(
                                     nn.Linear(32 + 53, 128),
                                     activation,
                                     nn.Linear(128, 32)
                                 )
+            
         else:
+            self.model_device = env_cfg.env.device
             self.combination_mlp = nn.Sequential(
                                         nn.Linear(32 + env_cfg.env.n_proprio, 128),
                                         activation,
@@ -30,8 +33,30 @@ class RecurrentDepthBackbone(nn.Module):
                                 last_activation
                             )
         self.hidden_states = None
+        
 
+    def float32multiarray_to_tensor(self, msg):
+        import numpy as np
+        import torch
+        # 检查数据是否为空
+        if len(msg.data) == 0:
+            print("[Warning] Float32MultiArray data is empty!")
+            return torch.zeros(1, 58, 87, device=self.model_device)
+        
+        import torch
+        if isinstance(msg.data, torch.Tensor):
+            arr = msg.data.cpu().numpy().astype(np.float32)
+        else:
+            arr = np.array(msg.data, dtype=np.float32)
+
+        
+        # reshape 成 (1, 58, 87)
+        arr = arr.reshape(1, 58, 87)
+
+        return torch.from_numpy(arr).to(self.model_device)
+    
     def forward(self, depth_image, proprioception):
+        depth_image = self.float32multiarray_to_tensor(depth_image)
         # 先处理深度图像，得到一个基础的特征表示，32维的 latent 数据
         depth_image = self.base_backbone(depth_image)
         # 再把 proprioception 和基础的图像 latent 拼接在一起，传入一个MLP处理 

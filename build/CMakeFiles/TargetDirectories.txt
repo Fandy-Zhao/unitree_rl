@@ -122,13 +122,6 @@
 /home/zzf/RL/unitree_rl/build/depth_process/CMakeFiles/install.dir
 /home/zzf/RL/unitree_rl/build/depth_process/CMakeFiles/install/local.dir
 /home/zzf/RL/unitree_rl/build/depth_process/CMakeFiles/install/strip.dir
-/home/zzf/RL/unitree_rl/build/rl/CMakeFiles/test.dir
-/home/zzf/RL/unitree_rl/build/rl/CMakeFiles/edit_cache.dir
-/home/zzf/RL/unitree_rl/build/rl/CMakeFiles/rebuild_cache.dir
-/home/zzf/RL/unitree_rl/build/rl/CMakeFiles/list_install_components.dir
-/home/zzf/RL/unitree_rl/build/rl/CMakeFiles/install.dir
-/home/zzf/RL/unitree_rl/build/rl/CMakeFiles/install/local.dir
-/home/zzf/RL/unitree_rl/build/rl/CMakeFiles/install/strip.dir
 /home/zzf/RL/unitree_rl/build/unitree_ros_to_real/unitree_legged_msgs/CMakeFiles/unitree_legged_msgs_generate_messages.dir
 /home/zzf/RL/unitree_rl/build/unitree_ros_to_real/unitree_legged_msgs/CMakeFiles/_unitree_legged_msgs_generate_messages_check_deps_MotorCmd.dir
 /home/zzf/RL/unitree_rl/build/unitree_ros_to_real/unitree_legged_msgs/CMakeFiles/_unitree_legged_msgs_generate_messages_check_deps_MotorState.dir
@@ -158,6 +151,13 @@
 /home/zzf/RL/unitree_rl/build/unitree_ros_to_real/unitree_legged_msgs/CMakeFiles/install.dir
 /home/zzf/RL/unitree_rl/build/unitree_ros_to_real/unitree_legged_msgs/CMakeFiles/install/local.dir
 /home/zzf/RL/unitree_rl/build/unitree_ros_to_real/unitree_legged_msgs/CMakeFiles/install/strip.dir
+/home/zzf/RL/unitree_rl/build/rl/CMakeFiles/test.dir
+/home/zzf/RL/unitree_rl/build/rl/CMakeFiles/edit_cache.dir
+/home/zzf/RL/unitree_rl/build/rl/CMakeFiles/rebuild_cache.dir
+/home/zzf/RL/unitree_rl/build/rl/CMakeFiles/list_install_components.dir
+/home/zzf/RL/unitree_rl/build/rl/CMakeFiles/install.dir
+/home/zzf/RL/unitree_rl/build/rl/CMakeFiles/install/local.dir
+/home/zzf/RL/unitree_rl/build/rl/CMakeFiles/install/strip.dir
 /home/zzf/RL/unitree_rl/build/unitree_ros-master/unitree_legged_control/CMakeFiles/unitree_legged_control.dir
 /home/zzf/RL/unitree_rl/build/unitree_ros-master/unitree_legged_control/CMakeFiles/test.dir
 /home/zzf/RL/unitree_rl/build/unitree_ros-master/unitree_legged_control/CMakeFiles/edit_cache.dir

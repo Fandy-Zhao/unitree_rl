@@ -1,1 +1,1 @@
-set(ORDERED_PATHS "/opt/ros/noetic/include;/opt/ros/noetic/share/xmlrpcpp/cmake/../../../include/xmlrpcpp;/usr/include/opencv4;/usr/include")
+set(ORDERED_PATHS "/home/zzf/RL/unitree_rl/devel/include;/opt/ros/noetic/include;/opt/ros/noetic/share/xmlrpcpp/cmake/../../../include/xmlrpcpp;/usr/include/opencv4;/usr/include")

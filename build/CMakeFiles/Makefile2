@@ -67,8 +67,8 @@ all: gtest/all
 all: unitree_ros-master/robots/go1_description/all
 all: move_base_msgs/all
 all: depth_process/all
-all: rl/all
 all: unitree_ros_to_real/unitree_legged_msgs/all
+all: rl/all
 all: unitree_ros-master/unitree_legged_control/all
 all: unitree_guide/unitree_actuator_sdk/unitree_motor_ctrl/all
 all: unitree_ros-master/unitree_controller/all
@@ -82,8 +82,8 @@ preinstall: gtest/preinstall
 preinstall: unitree_ros-master/robots/go1_description/preinstall
 preinstall: move_base_msgs/preinstall
 preinstall: depth_process/preinstall
-preinstall: rl/preinstall
 preinstall: unitree_ros_to_real/unitree_legged_msgs/preinstall
+preinstall: rl/preinstall
 preinstall: unitree_ros-master/unitree_legged_control/preinstall
 preinstall: unitree_guide/unitree_actuator_sdk/unitree_motor_ctrl/preinstall
 preinstall: unitree_ros-master/unitree_controller/preinstall
@@ -102,8 +102,8 @@ clean: gtest/clean
 clean: unitree_ros-master/robots/go1_description/clean
 clean: move_base_msgs/clean
 clean: depth_process/clean
-clean: rl/clean
 clean: unitree_ros_to_real/unitree_legged_msgs/clean
+clean: rl/clean
 clean: unitree_ros-master/unitree_legged_control/clean
 clean: unitree_guide/unitree_actuator_sdk/unitree_motor_ctrl/clean
 clean: unitree_ros-master/unitree_controller/clean
