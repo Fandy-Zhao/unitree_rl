@@ -160,8 +160,8 @@ class UnitreeRosReal:
         self.NUM_ACTIONS = getattr(RobotCfgs, robot_class_name).NUM_ACTIONS
         self.robot_namespace = robot_namespace
         self.low_state_topic = low_state_topic
-        self.low_cmd_topic = low_cmd_topic if not dryrun else low_cmd_topic + "_dryrun_" + str(np.random.randint(0, 65535))
-        
+        # self.low_cmd_topic = low_cmd_topic if not dryrun else low_cmd_topic + "_dryrun_" + str(np.random.randint(0, 65535))
+        self.low_cmd_topic = low_cmd_topic
         
         # self.joy_stick_topic = joy_stick_topic
         self.depth_data_topic = depth_data_topic
@@ -204,6 +204,8 @@ class UnitreeRosReal:
         self.low_state_buffer = LowState()
         
         self.depth_data = Float32MultiArray()
+        
+        self.low_cmd_buffer = LowCmd()
 
     def init_stand_config(self):
         self.startPos = [0.0] * 12
@@ -514,7 +516,7 @@ class UnitreeRosReal:
             
             if self.move_by_wireless_remote:
                 # left-y for forward/backward
-                ly = self.joy_stick_buffer[0]
+                ly = self.joy_stick_buffer[0]/255
                 if ly > self.lin_vel_deadband:
                     vx = (ly - self.lin_vel_deadband) / (1 - self.lin_vel_deadband) # (0, 1)
                     vx = vx * (self.cmd_px_range[1] - self.cmd_px_range[0]) + self.cmd_px_range[0]
@@ -524,7 +526,7 @@ class UnitreeRosReal:
                 else:
                     vx = 0
                 # left-x for turning left/right
-                lx = -self.joy_stick_buffer[1]
+                lx = -self.joy_stick_buffer[1]/255
                 if lx > self.ang_vel_deadband:
                     yaw = (lx - self.ang_vel_deadband) / (1 - self.ang_vel_deadband)
                     yaw = yaw * (self.cmd_pyaw_range[1] - self.cmd_pyaw_range[0]) + self.cmd_pyaw_range[0]
@@ -534,7 +536,7 @@ class UnitreeRosReal:
                 else:
                     yaw = 0
                 # right-x for side moving left/right
-                rx = -self.joy_stick_buffer[2]
+                rx = -self.joy_stick_buffer[2]/255
                 if rx > self.lin_vel_deadband:
                     vy = (rx - self.lin_vel_deadband) / (1 - self.lin_vel_deadband)
                     vy = vy * (self.cmd_py_range[1] - self.cmd_py_range[0]) + self.cmd_py_range[0]
@@ -625,15 +627,26 @@ class UnitreeRosReal:
         )
         end_time = time.monotonic()
 
-        print('ang vel time: {:.5f}'.format(ang_vel_time - start_time),
-                'imu time: {:.5f}'.format(imu_time - ang_vel_time),
-                'yaw time: {:.5f}'.format(yaw_time - imu_time),
-                'command time: {:.5f}'.format(commands_time - yaw_time),
-                'dof pos time: {:.5f}'.format(dof_pos_time - commands_time),
-                'dof vel time: {:.5f}'.format(dof_vel_time - dof_pos_time),
-                'last action time: {:.5f}'.format(last_action_time - dof_vel_time),
-                'contact time: {:.5f}'.format(contact_time - last_action_time)
-                )
+        # print('ang vel time: {:.5f}'.format(ang_vel_time - start_time),
+        #         'imu time: {:.5f}'.format(imu_time - ang_vel_time),
+        #         'yaw time: {:.5f}'.format(yaw_time - imu_time),
+        #         'command time: {:.5f}'.format(commands_time - yaw_time),
+        #         'dof pos time: {:.5f}'.format(dof_pos_time - commands_time),
+        #         'dof vel time: {:.5f}'.format(dof_vel_time - dof_pos_time),
+        #         'last action time: {:.5f}'.format(last_action_time - dof_vel_time),
+        #         'contact time: {:.5f}'.format(contact_time - last_action_time)
+        #         )
+        
+        #打印proprio
+        print(f'angle vel: {ang_vel}')
+        print(f'imu: {imu}')
+        print(f'yaw info: {yaw_info}')
+        print(f'commands: {commands}')
+        print(f'parkour walk: {parkour_walk}')
+        print(f'dof pos: {dof_pos}')
+        print(f'dof vel: {dof_vel}')
+        print(f'last actions: {last_actions}')
+        print(f'contact: {contact}')
         
         self.episode_length_buf += 1
 
@@ -705,12 +718,12 @@ class UnitreeRosReal:
         for sim_idx in range(self.NUM_DOF):
             real_idx = self.dof_map[sim_idx]
             if not self.dryrun:
-                self.low_cmd_buffer.motor_cmd[real_idx].mode = self.turn_on_motor_mode[sim_idx]
-            self.low_cmd_buffer.motor_cmd[real_idx].q = robot_coordinates_action[sim_idx].item() * self.dof_signs[sim_idx]
-            self.low_cmd_buffer.motor_cmd[real_idx].dq = 0.
-            self.low_cmd_buffer.motor_cmd[real_idx].tau = 0.
-            self.low_cmd_buffer.motor_cmd[real_idx].kp = self.p_gains[sim_idx].item()
-            self.low_cmd_buffer.motor_cmd[real_idx].kd = self.d_gains[sim_idx].item()
+                self.low_cmd_buffer.motorCmd[real_idx].mode = self.turn_on_motor_mode[sim_idx]
+            self.low_cmd_buffer.motorCmd[real_idx].q = robot_coordinates_action[sim_idx].item() * self.dof_signs[sim_idx]
+            self.low_cmd_buffer.motorCmd[real_idx].dq = 0.
+            self.low_cmd_buffer.motorCmd[real_idx].tau = 0.
+            self.low_cmd_buffer.motorCmd[real_idx].Kp = self.p_gains[sim_idx].item()
+            self.low_cmd_buffer.motorCmd[real_idx].Kd = self.d_gains[sim_idx].item()
         
         self.low_cmd_buffer.crc = get_crc(self.low_cmd_buffer)
         self.low_cmd_pub.publish(self.low_cmd_buffer)
@@ -720,12 +733,12 @@ class UnitreeRosReal:
         """ Turn off the motors """
         for sim_idx in range(self.NUM_DOF):
             real_idx = self.dof_map[sim_idx]
-            self.low_cmd_buffer.motor_cmd[real_idx].mode = 0x00
-            self.low_cmd_buffer.motor_cmd[real_idx].q = 0.
-            self.low_cmd_buffer.motor_cmd[real_idx].dq = 0.
-            self.low_cmd_buffer.motor_cmd[real_idx].tau = 0.
-            self.low_cmd_buffer.motor_cmd[real_idx].kp = 0.
-            self.low_cmd_buffer.motor_cmd[real_idx].kd = 0.
+            self.low_cmd_buffer.motorCmd[real_idx].mode = 0x00
+            self.low_cmd_buffer.motorCmd[real_idx].q = 0.
+            self.low_cmd_buffer.motorCmd[real_idx].dq = 0.
+            self.low_cmd_buffer.motorCmd[real_idx].tau = 0.
+            self.low_cmd_buffer.motorCmd[real_idx].Kp = 0.
+            self.low_cmd_buffer.motorCmd[real_idx].Kd = 0.
         self.low_cmd_buffer.crc = get_crc(self.low_cmd_buffer)
         self.low_cmd_pub.publish(self.low_cmd_buffer)
     """ Done: functions that actually publish the commands and take effect """

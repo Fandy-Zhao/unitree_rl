@@ -139,6 +139,7 @@ class VisualHandlerNode:
         
         self.depth_image = ros_numpy.numpify(msg)
         
+        self.receive = True
         # 打印信息用于调试（首次或节流）
         if self.depth_image is not None:
             rospy.loginfo_once(f"成功获取深度图。尺寸: {self.depth_image.shape}， 类型: {self.depth_image.dtype}， 范围: [{self.depth_image.min():.2f}, {self.depth_image.max():.2f}] m")
@@ -209,6 +210,8 @@ class VisualHandlerNode:
             rospy.logwarn("深度图像数据为空")
             return None
     
+        if not self.receive:
+            return self.last_depth_tensor
         try:
             # 1. 转换为NumPy数组
             depth_image_np = self.depth_image
@@ -302,6 +305,9 @@ class VisualHandlerNode:
                 f"深度图处理: 原始{self.original_size} → 裁剪后{depth_tensor.shape[2:]} → 输出{self.output_resolution}"
             )
             
+            self.last_depth_tensor = depth_tensor
+            self.receive = False
+            
             return depth_tensor
             
         except Exception as e:
@@ -381,10 +387,13 @@ class VisualHandlerNode:
     def main_loop(self):
         """用于'while'循环模式的主循环函数"""
         depth_image_pyt = self.get_depth_frame_sim()
+        
         if depth_image_pyt is not None:
+            
             self.publish_depth_data(depth_image_pyt)
+            # print("depth image published")
             #转换成图像
-            depth_image = depth_image_pyt[0].numpy() * 255
+            # depth_image = depth_image_pyt[0].numpy() * 255
             # cv2.imshow("depth image", depth_image.astype(np.uint8))
             # cv2.waitKey(10)
         else:
@@ -401,7 +410,7 @@ def main(args):
     print(config_dict)
         
     device = "cpu"
-    duration = 0.01
+    duration = 0.001
 
     visual_node = VisualHandlerNode(
         cfg=json.load(open(config_path, "r")),
@@ -416,6 +425,7 @@ def main(args):
         while not rospy.is_shutdown():     
             start_time = time.monotonic()
             visual_node.main_loop()
+            # print(f"main_loop duration: {1/(time.monotonic() - start_time)} hz")
             rate.sleep()
     elif args.loop_mode == "timer":
         rospy.loginfo("Starting main loop (timer mode)")
@@ -432,7 +442,7 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--logdir", type=str, default=None, help="The directory which contains the config.json and model_*.pt files")
+    parser.add_argument("--logdir", type=str, default='/home/zzf/RL/unitree_rl/src/rl/traced', help="The directory which contains the config.json and model_*.pt files")
     
     parser.add_argument("--height",
         type=int,
@@ -469,7 +479,7 @@ if __name__ == "__main__":
         default=100,
         help="num of pixel to crop in the original pyrealsense readings."
     )
-    parser.add_argument("--loop_mode", type=str, default="timer",
+    parser.add_argument("--loop_mode", type=str, default="while",
         choices=["while", "timer"],
         help="Select which mode to run the main policy control iteration",
     )

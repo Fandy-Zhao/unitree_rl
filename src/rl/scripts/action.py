@@ -40,6 +40,8 @@ class Action(UnitreeRosReal):
         
         print("Action init done")
         
+        self.start_ros_handlers()
+        
     # def __init__(self, cfg, *args, **kwargs, model_device="cuda", dryrun=False, mode="parkour"):
     #     super().__init__(*args, robot_class_name= "Go2", **kwargs)
         
@@ -264,22 +266,21 @@ class Action(UnitreeRosReal):
     def float32multiarray_to_tensor(self, msg):
         import numpy as np
         import torch
-
         # 检查数据是否为空
         if len(msg.data) == 0:
             print("[Warning] Float32MultiArray data is empty!")
             return torch.zeros(1, 58, 87, device=self.model_device)
-        
-        # 转 numpy
-        arr = np.array(msg.data, dtype=np.float32)
-        
-        # reshape 成 (1, 58, 87)
-        arr = arr.reshape(1, 58, 87)
-
-        # 转 torch tensor，并加 batch 和 channel 维度 (B,C,H,W)
-        tensor = torch.from_numpy(arr).float().unsqueeze(0)  # shape -> (1,1,58,87)
-        return tensor
-
+    
+        if isinstance(msg, torch.Tensor):
+            # 如果是张量，直接移动到指定设备
+            return msg.to(self.model_device)
+        elif hasattr(msg, 'data'):
+            # 如果是ROS消息，转换为numpy，再转为张量，然后放到指定设备
+            arr = np.array(msg.data, dtype=np.float32)
+            return torch.from_numpy(arr).to(self.model_device)
+        else:
+            raise TypeError("Unsupported type for float32multiarray_to_tensor: {}".format(type(msg)))
+    
     def warm_up(self):
         """Warm up the policy with initial iterations"""
         for _ in range(2):
@@ -483,9 +484,14 @@ def main(args):
         # Use while loop with rate control
         rate = rospy.Rate(1.0 / env_node.duration)
         while not rospy.is_shutdown():
+            start_time = time.monotonic()
             # print(f"main_loop duration: {env_node.duration}")
             env_node.main_loop()
-            rate.sleep()
+            #固定在100Hz
+            # 计算剩余时间
+            remaining_time = env_node.duration - (time.monotonic() - start_time)
+            if remaining_time > 0:
+                rate.sleep()
     else:
         rospy.logerr(f"Unknown loop mode: {args.loop_mode}")
         return
@@ -493,9 +499,9 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--logdir", type=str, default=None, 
+    parser.add_argument("--logdir", type=str, default='/home/zzf/RL/unitree_rl/src/rl/traced', 
                        help="Directory containing config.json and model files")
-    parser.add_argument("--nodryrun", action="store_true", default=False,
+    parser.add_argument("--nodryrun", action="store_true", default=True,
                        help="Disable dryrun mode")
     parser.add_argument("--loop_mode", type=str, default="timer",
                        choices=["while", "timer"],

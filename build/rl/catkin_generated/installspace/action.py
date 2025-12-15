@@ -11,11 +11,13 @@ import time
 import sys
 import argparse
 
-from unitree_ros_real import get_euler_xyz, UnitreeRosReal
+sys.path.append(os.path.join(os.path.dirname(__file__), '../src'))
+from rl.unitree_ros_real import get_euler_xyz, UnitreeRosReal
+
 from unitree_legged_msgs.msg import LowCmd, LowState, MotorCmd, MotorState
 from sensor_msgs.msg import Image
 from std_msgs.msg import Header
-import cv2
+# import cv2
 from cv_bridge import CvBridge
 
 # from sport_api_constants import *
@@ -27,15 +29,18 @@ class Action(UnitreeRosReal):
         self.global_counter = 0
         self.visual_update_interval = 5
 
-        self.actions_sim = torch.from_numpy(np.load('Action_sim_335-11_flat.npy')).to(self.model_device)
+        self.actions_sim = torch.from_numpy(np.load(r'/home/zzf/RL/unitree_rl/src/rl/Action_sim_335-11_flat.npy')).to(self.model_device)
 
         self.sim_ite = 3
  
         self.use_stand_policy = False
-        self.use_parkour_policy = False
-        self.use_sport_mode = True
+        self.use_parkour_policy = True
+        self.use_sport_mode = False
+        self.duration = 0.02
         
         print("Action init done")
+        
+        self.start_ros_handlers()
         
     # def __init__(self, cfg, *args, **kwargs, model_device="cuda", dryrun=False, mode="parkour"):
     #     super().__init__(*args, robot_class_name= "Go2", **kwargs)
@@ -257,7 +262,25 @@ class Action(UnitreeRosReal):
     #     self.proprio_history = []
     #     self.last_depth_image = None
     #     self.depth_latent_yaw = None
-        
+       
+    def float32multiarray_to_tensor(self, msg):
+        import numpy as np
+        import torch
+        # 检查数据是否为空
+        if len(msg.data) == 0:
+            print("[Warning] Float32MultiArray data is empty!")
+            return torch.zeros(1, 58, 87, device=self.model_device)
+    
+        if isinstance(msg, torch.Tensor):
+            # 如果是张量，直接移动到指定设备
+            return msg.to(self.model_device)
+        elif hasattr(msg, 'data'):
+            # 如果是ROS消息，转换为numpy，再转为张量，然后放到指定设备
+            arr = np.array(msg.data, dtype=np.float32)
+            return torch.from_numpy(arr).to(self.model_device)
+        else:
+            raise TypeError("Unsupported type for float32multiarray_to_tensor: {}".format(type(msg)))
+    
     def warm_up(self):
         """Warm up the policy with initial iterations"""
         for _ in range(2):
@@ -270,6 +293,7 @@ class Action(UnitreeRosReal):
             get_hist_pro_time = time.time()
             
             depth_image = self._get_depth_image()
+            depth_image = self.float32multiarray_to_tensor(depth_image)
             if self.depth_encode:
                 self.depth_latent_yaw = self.depth_encode(depth_image, proprio)
                 
@@ -460,8 +484,14 @@ def main(args):
         # Use while loop with rate control
         rate = rospy.Rate(1.0 / env_node.duration)
         while not rospy.is_shutdown():
+            start_time = time.monotonic()
+            # print(f"main_loop duration: {env_node.duration}")
             env_node.main_loop()
-            rate.sleep()
+            #固定在100Hz
+            # 计算剩余时间
+            remaining_time = env_node.duration - (time.monotonic() - start_time)
+            if remaining_time > 0:
+                rate.sleep()
     else:
         rospy.logerr(f"Unknown loop mode: {args.loop_mode}")
         return
@@ -469,9 +499,9 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--logdir", type=str, default=None, 
+    parser.add_argument("--logdir", type=str, default='/home/zzf/RL/unitree_rl/src/rl/traced', 
                        help="Directory containing config.json and model files")
-    parser.add_argument("--nodryrun", action="store_true", default=False,
+    parser.add_argument("--nodryrun", action="store_true", default=True,
                        help="Disable dryrun mode")
     parser.add_argument("--loop_mode", type=str, default="timer",
                        choices=["while", "timer"],

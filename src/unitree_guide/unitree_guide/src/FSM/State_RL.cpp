@@ -243,8 +243,10 @@ void State_RL::run()
     //     this->_last_targetPos_rl[j] = _targetPos_rl[j];
     // }
 
-    this->send_low_state();
+    //以100hz发送关节角度
 
+    this->send_low_state();
+    ros::Duration(0.01).sleep();
 }
 
 void State_RL::exit()
@@ -308,14 +310,15 @@ void State_RL::send_low_state()
 
 void State_RL::lowCmdCallback(const unitree_legged_msgs::LowCmd::ConstPtr& msg)
 {
+    // std::cout << "lowCmdCallback" << std::endl;
     // 从msg中提取数据并赋值给_lowCmd_rl
     for(int i(0); i < 12; ++i){
-        _lowCmd->motorCmd[i].mode = msg->motorCmd[i].mode;
+        // _lowCmd->motorCmd[i].mode = msg->motorCmd[i].mode;
         _lowCmd->motorCmd[i].q = msg->motorCmd[i].q;  
         _lowCmd->motorCmd[i].dq = msg->motorCmd[i].dq;
-        _lowCmd->motorCmd[i].tau = msg->motorCmd[i].tau;
-        _lowCmd->motorCmd[i].Kd = msg->motorCmd[i].Kd;
-        _lowCmd->motorCmd[i].Kp = msg->motorCmd[i].Kp;
+        // _lowCmd->motorCmd[i].tau = msg->motorCmd[i].tau;
+        // _lowCmd->motorCmd[i].Kd = msg->motorCmd[i].Kd;
+        // _lowCmd->motorCmd[i].Kp = msg->motorCmd[i].Kp;
     }
 }
 

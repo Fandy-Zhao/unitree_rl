@@ -10,7 +10,7 @@ class RecurrentDepthBackbone(nn.Module):
         last_activation = nn.Tanh()
         self.base_backbone = base_backbone
         if env_cfg == None:
-            self.model_device = "gpu"
+            self.model_device = "cuda"
             self.combination_mlp = nn.Sequential(
                                     nn.Linear(32 + 53, 128),
                                     activation,
@@ -42,18 +42,16 @@ class RecurrentDepthBackbone(nn.Module):
         if len(msg.data) == 0:
             print("[Warning] Float32MultiArray data is empty!")
             return torch.zeros(1, 58, 87, device=self.model_device)
-        
-        import torch
-        if isinstance(msg.data, torch.Tensor):
-            arr = msg.data.cpu().numpy().astype(np.float32)
-        else:
+    
+        if isinstance(msg, torch.Tensor):
+            # 如果是张量，直接移动到指定设备
+            return msg.to(self.model_device)
+        elif hasattr(msg, 'data'):
+            # 如果是ROS消息，转换为numpy，再转为张量，然后放到指定设备
             arr = np.array(msg.data, dtype=np.float32)
-
-        
-        # reshape 成 (1, 58, 87)
-        arr = arr.reshape(1, 58, 87)
-
-        return torch.from_numpy(arr).to(self.model_device)
+            return torch.from_numpy(arr).to(self.model_device)
+        else:
+            raise TypeError("Unsupported type for float32multiarray_to_tensor: {}".format(type(msg)))
     
     def forward(self, depth_image, proprioception):
         depth_image = self.float32multiarray_to_tensor(depth_image)
