@@ -1,0 +1,5 @@
+<launch>
+    <node pkg="rl" type="action.py" name="action" output="screen"/>
+    <node pkg="rl" type="depth_process.py" name="depth_process" output="screen"/>
+   	
+</launch>

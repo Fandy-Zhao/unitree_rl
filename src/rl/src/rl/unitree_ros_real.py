@@ -324,14 +324,6 @@ class UnitreeRosReal:
         )
         rospy.loginfo("Low state subscriber started, waiting to receive low state messages.")
 
-        # rospy.Subscriber(
-        #     self.joy_stick_topic,
-        #     WirelessController,
-        #     self._joy_stick_callback,
-        #     queue_size=1
-        # )
-        # rospy.loginfo("Wireless controller subscriber started, waiting to receive wireless controller messages.")
-
         # ROS Noetic中，Unitree API的消息格式可能需要调整
         # self.sport_state_pub = rospy.Publisher(
         #     '/api/robot_state/request',
@@ -378,68 +370,6 @@ class UnitreeRosReal:
         for sim_idx in range(self.NUM_DOF):
             real_idx = self.dof_map[sim_idx]
             self.dof_vel_[0, sim_idx] = self.low_state_buffer.motorState[real_idx].dq * self.dof_signs[sim_idx]
-
-    # def _joy_stick_callback(self, msg):
-    #     # rospy.logwarn("Wireless controller message received.")
-    #     self.joy_stick_buffer = msg
-    #     if self.move_by_wireless_remote:
-    #         # left-y for forward/backward
-    #         ly = msg.ly
-    #         if ly > self.lin_vel_deadband:
-    #             vx = (ly - self.lin_vel_deadband) / (1 - self.lin_vel_deadband) # (0, 1)
-    #             vx = vx * (self.cmd_px_range[1] - self.cmd_px_range[0]) + self.cmd_px_range[0]
-    #         elif ly < -self.lin_vel_deadband:
-    #             vx = (ly + self.lin_vel_deadband) / (1 - self.lin_vel_deadband) # (-1, 0)
-    #             vx = vx * (self.cmd_nx_range[1] - self.cmd_nx_range[0]) - self.cmd_nx_range[0]
-    #         else:
-    #             vx = 0
-    #         # left-x for turning left/right
-    #         lx = -msg.lx
-    #         if lx > self.ang_vel_deadband:
-    #             yaw = (lx - self.ang_vel_deadband) / (1 - self.ang_vel_deadband)
-    #             yaw = yaw * (self.cmd_pyaw_range[1] - self.cmd_pyaw_range[0]) + self.cmd_pyaw_range[0]
-    #         elif lx < -self.ang_vel_deadband:
-    #             yaw = (lx + self.ang_vel_deadband) / (1 - self.ang_vel_deadband)
-    #             yaw = yaw * (self.cmd_nyaw_range[1] - self.cmd_nyaw_range[0]) - self.cmd_nyaw_range[0]
-    #         else:
-    #             yaw = 0
-    #         # right-x for side moving left/right
-    #         rx = -msg.rx
-    #         if rx > self.lin_vel_deadband:
-    #             vy = (rx - self.lin_vel_deadband) / (1 - self.lin_vel_deadband)
-    #             vy = vy * (self.cmd_py_range[1] - self.cmd_py_range[0]) + self.cmd_py_range[0]
-    #         elif rx < -self.lin_vel_deadband:
-    #             vy = (rx + self.lin_vel_deadband) / (1 - self.lin_vel_deadband)
-    #             vy = vy * (self.cmd_ny_range[1] - self.cmd_ny_range[0]) - self.cmd_ny_range[0]
-    #         else:
-    #             vy = 0
-    #         self.xyyaw_command = torch.tensor([[0.5, vy, yaw]], device= self.model_device, dtype= torch.float32)
-
-    #     # refer to Unitree Remote Control data structure, msg.keys is a bit mask
-    #     # 00000000 00000001 means pressing the 0-th button (R1)
-    #     # 00000000 00000010 means pressing the 1-th button (L1)
-    #     # 10000000 00000000 means pressing the 15-th button (left)
-        
-    #     # if (msg.keys & self.WirelessButtons.R2) or (msg.keys & self.WirelessButtons.L2): # R2 or L2 is pressed
-    #     # if  msg.keys & self.WirelessButtons.L2: # R2 or L2 is pressed
-    #     #     rospy.logwarn("R2 or L2 is pressed, the motors and this process shuts down.")
-    #     #     self._turn_off_motors()
-    #     #     raise SystemExit()
-
-    #     # roll-pitch target
-    #     if hasattr(self, "roll_pitch_yaw_cmd"):
-    #         if (msg.keys & self.WirelessButtons.up):
-    #             self.roll_pitch_yaw_cmd[0, 1] += 0.1
-    #             rospy.loginfo("Pitch Command: " + str(self.roll_pitch_yaw_cmd))
-    #         if (msg.keys & self.WirelessButtons.down):
-    #             self.roll_pitch_yaw_cmd[0, 1] -= 0.1
-    #             rospy.loginfo("Pitch Command: " + str(self.roll_pitch_yaw_cmd))
-    #         if (msg.keys & self.WirelessButtons.left):
-    #             self.roll_pitch_yaw_cmd[0, 0] -= 0.1
-    #             rospy.loginfo("Roll Command: " + str(self.roll_pitch_yaw_cmd))
-    #         if (msg.keys & self.WirelessButtons.right):
-    #             self.roll_pitch_yaw_cmd[0, 0] += 0.1
-    #             rospy.loginfo("Roll Command: " + str(self.roll_pitch_yaw_cmd))
 
     def _depth_data_callback(self, msg):
         self.depth_data = torch.tensor(msg.data, dtype=torch.float32).reshape(1, 58, 87).to(self.model_device)
@@ -522,46 +452,44 @@ class UnitreeRosReal:
         return yaw_info
 
     #  maybe only vx used
-    # 不清楚逻辑
     def _get_commands_obs(self):
         if self.move_by_wireless_remote:
             self.joy_stick_buffer = (np.frombuffer(self.low_state_buffer.wirelessRemote[0:3], dtype=np.uint8).astype(np.float32) / 127.5) - 1.0
             print("joy_stick_buffer.ly: ", self.joy_stick_buffer[0])
             
-            if self.move_by_wireless_remote:
-                # left-y for forward/backward
-                ly = self.joy_stick_buffer[0]
-                if ly > self.lin_vel_deadband:
-                    vx = (ly - self.lin_vel_deadband) / (1 - self.lin_vel_deadband) # (0, 1)
-                    vx = vx * (self.cmd_px_range[1] - self.cmd_px_range[0]) + self.cmd_px_range[0]
-                elif ly < -self.lin_vel_deadband:
-                    vx = (ly + self.lin_vel_deadband) / (1 - self.lin_vel_deadband) # (-1, 0)
-                    vx = vx * (self.cmd_nx_range[1] - self.cmd_nx_range[0]) - self.cmd_nx_range[0]
-                else:
-                    vx = 0
-                # left-x for turning left/right
-                lx = -self.joy_stick_buffer[1]
-                if lx > self.ang_vel_deadband:
-                    yaw = (lx - self.ang_vel_deadband) / (1 - self.ang_vel_deadband)
-                    yaw = yaw * (self.cmd_pyaw_range[1] - self.cmd_pyaw_range[0]) + self.cmd_pyaw_range[0]
-                elif lx < -self.ang_vel_deadband:
-                    yaw = (lx + self.ang_vel_deadband) / (1 - self.ang_vel_deadband)
-                    yaw = yaw * (self.cmd_nyaw_range[1] - self.cmd_nyaw_range[0]) - self.cmd_nyaw_range[0]
-                else:
-                    yaw = 0
-                # right-x for side moving left/right
-                rx = -self.joy_stick_buffer[2]
-                if rx > self.lin_vel_deadband:
-                    vy = (rx - self.lin_vel_deadband) / (1 - self.lin_vel_deadband)
-                    vy = vy * (self.cmd_py_range[1] - self.cmd_py_range[0]) + self.cmd_py_range[0]
-                elif rx < -self.lin_vel_deadband:
-                    vy = (rx + self.lin_vel_deadband) / (1 - self.lin_vel_deadband)
-                    vy = vy * (self.cmd_ny_range[1] - self.cmd_ny_range[0]) - self.cmd_ny_range[0]
-                else:
-                    vy = 0
-                self.xyyaw_command = torch.tensor([[vx, vy, yaw]], device= self.model_device, dtype= torch.float32)
-                
-            # vx, _, _ = self.xyyaw_command[0, :]
+            
+            # left-y for forward/backward
+            ly = self.joy_stick_buffer[0]
+            if ly > self.lin_vel_deadband:
+                vx = (ly - self.lin_vel_deadband) / (1 - self.lin_vel_deadband) # (0, 1)
+                vx = vx * (self.cmd_px_range[1] - self.cmd_px_range[0]) + self.cmd_px_range[0]
+            elif ly < -self.lin_vel_deadband:
+                vx = (ly + self.lin_vel_deadband) / (1 - self.lin_vel_deadband) # (-1, 0)
+                vx = vx * (self.cmd_nx_range[1] - self.cmd_nx_range[0]) - self.cmd_nx_range[0]
+            else:
+                vx = 0
+            # left-x for turning left/right
+            lx = -self.joy_stick_buffer[1]
+            if lx > self.ang_vel_deadband:
+                yaw = (lx - self.ang_vel_deadband) / (1 - self.ang_vel_deadband)
+                yaw = yaw * (self.cmd_pyaw_range[1] - self.cmd_pyaw_range[0]) + self.cmd_pyaw_range[0]
+            elif lx < -self.ang_vel_deadband:
+                yaw = (lx + self.ang_vel_deadband) / (1 - self.ang_vel_deadband)
+                yaw = yaw * (self.cmd_nyaw_range[1] - self.cmd_nyaw_range[0]) - self.cmd_nyaw_range[0]
+            else:
+                yaw = 0
+            # right-x for side moving left/right
+            rx = -self.joy_stick_buffer[2]
+            if rx > self.lin_vel_deadband:
+                vy = (rx - self.lin_vel_deadband) / (1 - self.lin_vel_deadband)
+                vy = vy * (self.cmd_py_range[1] - self.cmd_py_range[0]) + self.cmd_py_range[0]
+            elif rx < -self.lin_vel_deadband:
+                vy = (rx + self.lin_vel_deadband) / (1 - self.lin_vel_deadband)
+                vy = vy * (self.cmd_ny_range[1] - self.cmd_ny_range[0]) - self.cmd_ny_range[0]
+            else:
+                vy = 0
+            self.xyyaw_command = torch.tensor([[vx, vy, yaw]], device= self.model_device, dtype= torch.float32)
+            
             vx, vy, yaw = self.xyyaw_command[0, :]
             commands = torch.tensor([[0, 0, vx]], device= self.model_device, dtype= torch.float32)
             print("vx: ", vx)

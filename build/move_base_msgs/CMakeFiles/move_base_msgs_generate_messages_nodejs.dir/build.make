@@ -76,73 +76,73 @@ move_base_msgs/CMakeFiles/move_base_msgs_generate_messages_nodejs: /home/zzf/RL/
 
 /home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseAction.js: /opt/ros/noetic/lib/gennodejs/gen_nodejs.py
 /home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseAction.js: /home/zzf/RL/unitree_rl/devel/share/move_base_msgs/msg/MoveBaseAction.msg
+/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseAction.js: /opt/ros/noetic/share/std_msgs/msg/Header.msg
+/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseAction.js: /home/zzf/RL/unitree_rl/devel/share/move_base_msgs/msg/MoveBaseActionFeedback.msg
+/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseAction.js: /opt/ros/noetic/share/geometry_msgs/msg/Point.msg
+/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseAction.js: /opt/ros/noetic/share/actionlib_msgs/msg/GoalID.msg
+/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseAction.js: /home/zzf/RL/unitree_rl/devel/share/move_base_msgs/msg/MoveBaseResult.msg
+/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseAction.js: /home/zzf/RL/unitree_rl/devel/share/move_base_msgs/msg/MoveBaseGoal.msg
+/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseAction.js: /opt/ros/noetic/share/geometry_msgs/msg/Quaternion.msg
 /home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseAction.js: /home/zzf/RL/unitree_rl/devel/share/move_base_msgs/msg/MoveBaseActionResult.msg
 /home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseAction.js: /home/zzf/RL/unitree_rl/devel/share/move_base_msgs/msg/MoveBaseActionGoal.msg
-/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseAction.js: /opt/ros/noetic/share/actionlib_msgs/msg/GoalID.msg
-/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseAction.js: /home/zzf/RL/unitree_rl/devel/share/move_base_msgs/msg/MoveBaseFeedback.msg
-/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseAction.js: /opt/ros/noetic/share/actionlib_msgs/msg/GoalStatus.msg
-/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseAction.js: /home/zzf/RL/unitree_rl/devel/share/move_base_msgs/msg/MoveBaseActionFeedback.msg
 /home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseAction.js: /opt/ros/noetic/share/geometry_msgs/msg/Pose.msg
-/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseAction.js: /opt/ros/noetic/share/geometry_msgs/msg/Quaternion.msg
 /home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseAction.js: /opt/ros/noetic/share/geometry_msgs/msg/PoseStamped.msg
-/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseAction.js: /home/zzf/RL/unitree_rl/devel/share/move_base_msgs/msg/MoveBaseGoal.msg
-/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseAction.js: /home/zzf/RL/unitree_rl/devel/share/move_base_msgs/msg/MoveBaseResult.msg
-/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseAction.js: /opt/ros/noetic/share/geometry_msgs/msg/Point.msg
-/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseAction.js: /opt/ros/noetic/share/std_msgs/msg/Header.msg
+/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseAction.js: /opt/ros/noetic/share/actionlib_msgs/msg/GoalStatus.msg
+/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseAction.js: /home/zzf/RL/unitree_rl/devel/share/move_base_msgs/msg/MoveBaseFeedback.msg
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/zzf/RL/unitree_rl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating Javascript code from move_base_msgs/MoveBaseAction.msg"
 	cd /home/zzf/RL/unitree_rl/build/move_base_msgs && ../catkin_generated/env_cached.sh /usr/bin/python3 /opt/ros/noetic/share/gennodejs/cmake/../../../lib/gennodejs/gen_nodejs.py /home/zzf/RL/unitree_rl/devel/share/move_base_msgs/msg/MoveBaseAction.msg -Imove_base_msgs:/home/zzf/RL/unitree_rl/devel/share/move_base_msgs/msg -Iactionlib_msgs:/opt/ros/noetic/share/actionlib_msgs/cmake/../msg -Istd_msgs:/opt/ros/noetic/share/std_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/noetic/share/geometry_msgs/cmake/../msg -p move_base_msgs -o /home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg
 
 /home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionFeedback.js: /opt/ros/noetic/lib/gennodejs/gen_nodejs.py
 /home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionFeedback.js: /home/zzf/RL/unitree_rl/devel/share/move_base_msgs/msg/MoveBaseActionFeedback.msg
-/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionFeedback.js: /opt/ros/noetic/share/actionlib_msgs/msg/GoalID.msg
-/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionFeedback.js: /home/zzf/RL/unitree_rl/devel/share/move_base_msgs/msg/MoveBaseFeedback.msg
-/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionFeedback.js: /opt/ros/noetic/share/actionlib_msgs/msg/GoalStatus.msg
-/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionFeedback.js: /opt/ros/noetic/share/geometry_msgs/msg/Pose.msg
-/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionFeedback.js: /opt/ros/noetic/share/geometry_msgs/msg/Quaternion.msg
-/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionFeedback.js: /opt/ros/noetic/share/geometry_msgs/msg/PoseStamped.msg
-/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionFeedback.js: /opt/ros/noetic/share/geometry_msgs/msg/Point.msg
 /home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionFeedback.js: /opt/ros/noetic/share/std_msgs/msg/Header.msg
+/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionFeedback.js: /opt/ros/noetic/share/geometry_msgs/msg/Point.msg
+/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionFeedback.js: /opt/ros/noetic/share/actionlib_msgs/msg/GoalID.msg
+/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionFeedback.js: /opt/ros/noetic/share/geometry_msgs/msg/Quaternion.msg
+/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionFeedback.js: /opt/ros/noetic/share/geometry_msgs/msg/Pose.msg
+/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionFeedback.js: /opt/ros/noetic/share/geometry_msgs/msg/PoseStamped.msg
+/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionFeedback.js: /opt/ros/noetic/share/actionlib_msgs/msg/GoalStatus.msg
+/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionFeedback.js: /home/zzf/RL/unitree_rl/devel/share/move_base_msgs/msg/MoveBaseFeedback.msg
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/zzf/RL/unitree_rl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Generating Javascript code from move_base_msgs/MoveBaseActionFeedback.msg"
 	cd /home/zzf/RL/unitree_rl/build/move_base_msgs && ../catkin_generated/env_cached.sh /usr/bin/python3 /opt/ros/noetic/share/gennodejs/cmake/../../../lib/gennodejs/gen_nodejs.py /home/zzf/RL/unitree_rl/devel/share/move_base_msgs/msg/MoveBaseActionFeedback.msg -Imove_base_msgs:/home/zzf/RL/unitree_rl/devel/share/move_base_msgs/msg -Iactionlib_msgs:/opt/ros/noetic/share/actionlib_msgs/cmake/../msg -Istd_msgs:/opt/ros/noetic/share/std_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/noetic/share/geometry_msgs/cmake/../msg -p move_base_msgs -o /home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg
 
 /home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionGoal.js: /opt/ros/noetic/lib/gennodejs/gen_nodejs.py
 /home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionGoal.js: /home/zzf/RL/unitree_rl/devel/share/move_base_msgs/msg/MoveBaseActionGoal.msg
-/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionGoal.js: /opt/ros/noetic/share/actionlib_msgs/msg/GoalID.msg
-/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionGoal.js: /opt/ros/noetic/share/geometry_msgs/msg/Pose.msg
-/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionGoal.js: /opt/ros/noetic/share/geometry_msgs/msg/Quaternion.msg
-/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionGoal.js: /opt/ros/noetic/share/geometry_msgs/msg/PoseStamped.msg
-/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionGoal.js: /home/zzf/RL/unitree_rl/devel/share/move_base_msgs/msg/MoveBaseGoal.msg
-/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionGoal.js: /opt/ros/noetic/share/geometry_msgs/msg/Point.msg
 /home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionGoal.js: /opt/ros/noetic/share/std_msgs/msg/Header.msg
+/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionGoal.js: /opt/ros/noetic/share/geometry_msgs/msg/Point.msg
+/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionGoal.js: /opt/ros/noetic/share/actionlib_msgs/msg/GoalID.msg
+/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionGoal.js: /home/zzf/RL/unitree_rl/devel/share/move_base_msgs/msg/MoveBaseGoal.msg
+/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionGoal.js: /opt/ros/noetic/share/geometry_msgs/msg/Quaternion.msg
+/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionGoal.js: /opt/ros/noetic/share/geometry_msgs/msg/Pose.msg
+/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionGoal.js: /opt/ros/noetic/share/geometry_msgs/msg/PoseStamped.msg
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/zzf/RL/unitree_rl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Generating Javascript code from move_base_msgs/MoveBaseActionGoal.msg"
 	cd /home/zzf/RL/unitree_rl/build/move_base_msgs && ../catkin_generated/env_cached.sh /usr/bin/python3 /opt/ros/noetic/share/gennodejs/cmake/../../../lib/gennodejs/gen_nodejs.py /home/zzf/RL/unitree_rl/devel/share/move_base_msgs/msg/MoveBaseActionGoal.msg -Imove_base_msgs:/home/zzf/RL/unitree_rl/devel/share/move_base_msgs/msg -Iactionlib_msgs:/opt/ros/noetic/share/actionlib_msgs/cmake/../msg -Istd_msgs:/opt/ros/noetic/share/std_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/noetic/share/geometry_msgs/cmake/../msg -p move_base_msgs -o /home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg
 
 /home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionResult.js: /opt/ros/noetic/lib/gennodejs/gen_nodejs.py
 /home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionResult.js: /home/zzf/RL/unitree_rl/devel/share/move_base_msgs/msg/MoveBaseActionResult.msg
-/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionResult.js: /opt/ros/noetic/share/actionlib_msgs/msg/GoalID.msg
+/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionResult.js: /opt/ros/noetic/share/std_msgs/msg/Header.msg
 /home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionResult.js: /home/zzf/RL/unitree_rl/devel/share/move_base_msgs/msg/MoveBaseResult.msg
 /home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionResult.js: /opt/ros/noetic/share/actionlib_msgs/msg/GoalStatus.msg
-/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionResult.js: /opt/ros/noetic/share/std_msgs/msg/Header.msg
+/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseActionResult.js: /opt/ros/noetic/share/actionlib_msgs/msg/GoalID.msg
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/zzf/RL/unitree_rl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Generating Javascript code from move_base_msgs/MoveBaseActionResult.msg"
 	cd /home/zzf/RL/unitree_rl/build/move_base_msgs && ../catkin_generated/env_cached.sh /usr/bin/python3 /opt/ros/noetic/share/gennodejs/cmake/../../../lib/gennodejs/gen_nodejs.py /home/zzf/RL/unitree_rl/devel/share/move_base_msgs/msg/MoveBaseActionResult.msg -Imove_base_msgs:/home/zzf/RL/unitree_rl/devel/share/move_base_msgs/msg -Iactionlib_msgs:/opt/ros/noetic/share/actionlib_msgs/cmake/../msg -Istd_msgs:/opt/ros/noetic/share/std_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/noetic/share/geometry_msgs/cmake/../msg -p move_base_msgs -o /home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg
 
 /home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseFeedback.js: /opt/ros/noetic/lib/gennodejs/gen_nodejs.py
 /home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseFeedback.js: /home/zzf/RL/unitree_rl/devel/share/move_base_msgs/msg/MoveBaseFeedback.msg
-/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseFeedback.js: /opt/ros/noetic/share/geometry_msgs/msg/Pose.msg
-/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseFeedback.js: /opt/ros/noetic/share/geometry_msgs/msg/Quaternion.msg
-/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseFeedback.js: /opt/ros/noetic/share/geometry_msgs/msg/PoseStamped.msg
-/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseFeedback.js: /opt/ros/noetic/share/geometry_msgs/msg/Point.msg
 /home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseFeedback.js: /opt/ros/noetic/share/std_msgs/msg/Header.msg
+/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseFeedback.js: /opt/ros/noetic/share/geometry_msgs/msg/Point.msg
+/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseFeedback.js: /opt/ros/noetic/share/geometry_msgs/msg/Quaternion.msg
+/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseFeedback.js: /opt/ros/noetic/share/geometry_msgs/msg/Pose.msg
+/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseFeedback.js: /opt/ros/noetic/share/geometry_msgs/msg/PoseStamped.msg
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/zzf/RL/unitree_rl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Generating Javascript code from move_base_msgs/MoveBaseFeedback.msg"
 	cd /home/zzf/RL/unitree_rl/build/move_base_msgs && ../catkin_generated/env_cached.sh /usr/bin/python3 /opt/ros/noetic/share/gennodejs/cmake/../../../lib/gennodejs/gen_nodejs.py /home/zzf/RL/unitree_rl/devel/share/move_base_msgs/msg/MoveBaseFeedback.msg -Imove_base_msgs:/home/zzf/RL/unitree_rl/devel/share/move_base_msgs/msg -Iactionlib_msgs:/opt/ros/noetic/share/actionlib_msgs/cmake/../msg -Istd_msgs:/opt/ros/noetic/share/std_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/noetic/share/geometry_msgs/cmake/../msg -p move_base_msgs -o /home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg
 
 /home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseGoal.js: /opt/ros/noetic/lib/gennodejs/gen_nodejs.py
 /home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseGoal.js: /home/zzf/RL/unitree_rl/devel/share/move_base_msgs/msg/MoveBaseGoal.msg
-/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseGoal.js: /opt/ros/noetic/share/geometry_msgs/msg/Pose.msg
-/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseGoal.js: /opt/ros/noetic/share/geometry_msgs/msg/Quaternion.msg
-/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseGoal.js: /opt/ros/noetic/share/geometry_msgs/msg/PoseStamped.msg
-/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseGoal.js: /opt/ros/noetic/share/geometry_msgs/msg/Point.msg
 /home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseGoal.js: /opt/ros/noetic/share/std_msgs/msg/Header.msg
+/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseGoal.js: /opt/ros/noetic/share/geometry_msgs/msg/Point.msg
+/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseGoal.js: /opt/ros/noetic/share/geometry_msgs/msg/Quaternion.msg
+/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseGoal.js: /opt/ros/noetic/share/geometry_msgs/msg/Pose.msg
+/home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg/MoveBaseGoal.js: /opt/ros/noetic/share/geometry_msgs/msg/PoseStamped.msg
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/zzf/RL/unitree_rl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Generating Javascript code from move_base_msgs/MoveBaseGoal.msg"
 	cd /home/zzf/RL/unitree_rl/build/move_base_msgs && ../catkin_generated/env_cached.sh /usr/bin/python3 /opt/ros/noetic/share/gennodejs/cmake/../../../lib/gennodejs/gen_nodejs.py /home/zzf/RL/unitree_rl/devel/share/move_base_msgs/msg/MoveBaseGoal.msg -Imove_base_msgs:/home/zzf/RL/unitree_rl/devel/share/move_base_msgs/msg -Iactionlib_msgs:/opt/ros/noetic/share/actionlib_msgs/cmake/../msg -Istd_msgs:/opt/ros/noetic/share/std_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/noetic/share/geometry_msgs/cmake/../msg -p move_base_msgs -o /home/zzf/RL/unitree_rl/devel/share/gennodejs/ros/move_base_msgs/msg
 

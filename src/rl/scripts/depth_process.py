@@ -56,6 +56,7 @@ class VisualHandlerNode:
             depth_input_topic= "/camera/forward_depth",
             camera_info_topic= "/camera/camera_info",
             forward_depth_image_topic= "/forward_depth_image",
+            sim_real: str = "sim",
         ):
         
         rospy.init_node("depth_image", anonymous=True)
@@ -72,6 +73,8 @@ class VisualHandlerNode:
 
         self.depth_image = None
         self.original_size = None
+        
+        self.sim_real = sim_real
         
         self.parse_args()
         # self.start_pipeline()
@@ -320,56 +323,106 @@ class VisualHandlerNode:
             rospy.logerr(traceback.format_exc())
             return None
     
-    # def get_depth_frame(self):
-    #     # read from pyrealsense2, preprocess and write the model embedding to the buffer
-    #     latency_range  = [0.08, 0.142]
-    #     rs_frame = self.rs_pipeline.wait_for_frames(int( latency_range[1] * 1000 )) # ms
-        
-    #     depth_frame = rs_frame.get_depth_frame()
-    #     if not depth_frame:
-    #         # 修改7: ROS1的节流日志函数
-    #         rospy.logerr_throttle(60, "No depth frame") # throttle_duration_sec改为秒
-    #         return None
-        
-    #     for rs_filter in self.rs_filters:
-    #         depth_frame = rs_filter.process(depth_frame)
-        
-    #     depth_image_pyt = torch.from_numpy(np.asanyarray(depth_frame.get_data()).astype(np.float32)).unsqueeze(0)
-        
-    #     # apply torch filters
-    #     # 注意：切片操作需确保索引有效，当crop值为0时，-0-1的写法会导致问题，已调整
-    #     crop_top = self.cropping[0]
-    #     crop_bottom = self.cropping[1]
-    #     crop_left = self.cropping[2]
-    #     crop_right = self.cropping[3]
-        
-    #     h_start = crop_top
-    #     h_end = -crop_bottom if crop_bottom > 0 else None
-    #     w_start = crop_left
-    #     w_end = -crop_right if crop_right > 0 else None
-        
-    #     depth_image_pyt = depth_image_pyt[:, h_start:h_end, w_start:w_end]
+    def get_depth_frame_real(self, use_dynamic_crop=True):
 
-    #     depth_image_pyt = torch.clip(depth_image_pyt, self.depth_range[0], self.depth_range[1]) / (self.depth_range[1] - self.depth_range[0])
-    #     depth_image_pyt = resize2d(depth_image_pyt, self.output_resolution)
+        if not self.receive:
+            return self.last_depth_tensor
+        try:
+            # read from pyrealsense2, preprocess and write the model embedding to the buffer
+            latency_range  = [0.08, 0.142]
+            rs_frame = self.rs_pipeline.wait_for_frames(int( latency_range[1] * 1000 )) # ms
+            
+            depth_frame = rs_frame.get_depth_frame()
+            if not depth_frame:
+                rospy.logerr_throttle(60, "No depth frame") 
+                return None
+            
+            for rs_filter in self.rs_filters:
+                depth_frame = rs_filter.process(depth_frame)
+            
+            depth_tensor = torch.from_numpy(np.asanyarray(depth_frame.get_data()).astype(np.float32)).unsqueeze(0)
 
-    #     # publish the depth image input to ros topic
-    #     rospy.loginfo_once("depth range: {}-{}".format(self.depth_range[0], self.depth_range[1]))
-    #     depth_input_data = (
-    #         depth_image_pyt.detach().cpu().numpy() * (self.depth_range[1] - self.depth_range[0]) + self.depth_range[0]).astype(np.uint16)[0]
-        
-    #     depth_image_pyt -= 0.5 # [-0.5, 0.5])
+            # 记录初始张量形状
+            rospy.logdebug_once(f"初始张量形状: {depth_tensor.shape}，设备: {depth_tensor.device}")
+            
+            # 4. 计算并应用裁剪
+            if use_dynamic_crop:
+                # 动态计算裁剪参数
+                crop_params = self.calculate_center_crop(
+                    depth_tensor.shape[2], 
+                    depth_tensor.shape[3]
+                )
+                rospy.logdebug_once(f"动态裁剪参数: {crop_params}")
+            else:
+                # 使用静态裁剪参数
+                crop_params = self.static_crop
+            
+            # 应用裁剪
+            if any(crop_params):  # 如果有任何非零裁剪参数
+                depth_tensor = self.apply_cropping(depth_tensor, crop_params)
+                rospy.loginfo_once(f"应用裁剪: {crop_params}，裁剪后尺寸: {depth_tensor.shape[2:]}")
+            
+            # 5. 归一化到深度范围 [0, 1]
+            depth_tensor = torch.clamp(depth_tensor, self.depth_range[0], self.depth_range[1])
+            depth_tensor = (depth_tensor - self.depth_range[0]) / (self.depth_range[1] - self.depth_range[0])
+            
+            # 6. 缩放到目标尺寸 (58, 87)
+            # 使用双线性插值保持空间关系
+            depth_tensor = F.interpolate(
+                depth_tensor, 
+                size=self.output_resolution, 
+                mode='bilinear', 
+                align_corners=False
+            )
+            rospy.logdebug_once(f"缩放后张量形状: {depth_tensor.shape}")
+            
+            # 用于发布的深度数据（反归一化到原始范围）
+            depth_for_publish = depth_tensor.clone()
+            depth_for_publish = depth_for_publish * (self.depth_range[1] - self.depth_range[0]) + self.depth_range[0]
+            
+            # 【修复2】确保是2D数组 (58, 87)，移回CPU用于发布
+            depth_for_publish_np = depth_for_publish.squeeze().cpu().numpy().astype(np.float32)
 
-    #     # 使用ros_numpy转换，注意编码
-    #     depth_input_msg = rnp.msgify(Image, depth_input_data.astype(np.float32), encoding="32FC1")
-    #     # 修改8: 获取ROS1时间戳
-    #     depth_input_msg.header.stamp = rospy.Time.now()
-    #     depth_input_msg.header.frame_id = "d435_sim_depth_link"
-    #     self.depth_input_pub.publish(depth_input_msg)
-    #     rospy.loginfo_once("depth input published")
-
-    #     return depth_image_pyt
-
+            # 验证数组形状
+            if depth_for_publish_np.ndim != 2:
+                rospy.logwarn(f"发布数据维度错误: {depth_for_publish_np.shape}，期望 (58, 87)")
+                # 尝试修复：如果是3D且第三维是1，则压缩
+                if depth_for_publish_np.ndim == 3 and depth_for_publish_np.shape[2] == 1:
+                    depth_for_publish_np = depth_for_publish_np[:, :, 0]
+                else:
+                    # 尝试重塑
+                    depth_for_publish_np = depth_for_publish_np.reshape(self.output_resolution[0], self.output_resolution[1])
+            
+            # 8. 发布处理后的深度图（用于可视化/调试）
+            try:
+                depth_input_msg = rnp.msgify(Image, depth_for_publish_np, encoding="32FC1")
+                depth_input_msg.header.stamp = rospy.Time.now()
+                depth_input_msg.header.frame_id = "d435_sim_depth_link"
+                self.depth_input_pub.publish(depth_input_msg)
+                rospy.logdebug_once("深度图输入已发布")
+            except Exception as e:
+                rospy.logerr(f"发布深度图时出错: {e}")
+                rospy.logerr(f"数组形状: {depth_for_publish_np.shape}, 维度: {depth_for_publish_np.ndim}")
+            
+            # 9. 调整数值范围到 [-0.5, 0.5]（模型需要的输入范围）
+            depth_tensor = depth_tensor - 0.5
+            
+            # 10. 记录处理统计信息
+            rospy.loginfo_throttle(5.0, 
+                f"深度图处理: 原始{self.original_size} → 裁剪后{depth_tensor.shape[2:]} → 输出{self.output_resolution}"
+            )
+            
+            self.last_depth_tensor = depth_tensor
+            self.receive = False
+            
+            return depth_tensor
+            
+        except Exception as e:
+            rospy.logerr(f"深度图处理错误: {e}")
+            import traceback
+            rospy.logerr(traceback.format_exc())
+            return None
+    
     def publish_depth_data(self, depth_data):
         msg = Float32MultiArray()
         msg.data = depth_data.flatten().detach().cpu().numpy().tolist()
@@ -381,31 +434,34 @@ class VisualHandlerNode:
         self.main_loop_timer = rospy.Timer(rospy.Duration(duration), self.main_loop_callback)
 
     def main_loop_callback(self, event):
-        
-        depth_image_pyt = self.get_depth_frame_sim()
+        if self.sim_real == "sim":
+            depth_image_pyt = self.get_depth_frame_sim()
+        else:
+            depth_image_pyt = self.get_depth_frame_real()
         if depth_image_pyt is not None:
             self.publish_depth_data(depth_image_pyt)
         else:
             rospy.logwarn("One frame of depth latent if not acquired")
 
-    def main_loop(self):
+    def main_loop(self,duration=0.01):
         """用于'while'循环模式的主循环函数"""
 
-        depth_image_pyt = self.get_depth_frame_sim()
-        
-
-        
-        if depth_image_pyt is not None:
+        rate = rospy.Rate(1/duration)
+        while not rospy.is_shutdown():     
             
-            self.publish_depth_data(depth_image_pyt)
-            # print("depth image published")
-            #转换成图像
-            # depth_image = depth_image_pyt[0].numpy() * 255
-            # cv2.imshow("depth image", depth_image.astype(np.uint8))
-            # cv2.waitKey(10)
-        else:
-            rospy.logwarn("One frame of depth latent if not acquired")
+            if self.sim_real == "sim":
+                depth_image_pyt = self.get_depth_frame_sim()
+            else:
+                depth_image_pyt = self.get_depth_frame_real()
+            
+            if depth_image_pyt is not None:
+                
+                self.publish_depth_data(depth_image_pyt)
 
+            else:
+                rospy.logwarn("One frame of depth latent if not acquired")
+
+            rate.sleep()
 
 @torch.inference_mode()
 def main(args):
@@ -417,7 +473,7 @@ def main(args):
     print(config_dict)
         
     device = args.device
-    duration = 0.001
+    duration = 0.01
 
     visual_node = VisualHandlerNode(
         cfg=json.load(open(config_path, "r")),
@@ -425,18 +481,15 @@ def main(args):
         cropping=[args.crop_top, args.crop_bottom, args.crop_left, args.crop_right],
         rs_resolution=(args.width, args.height),
         rs_fps=args.fps,
+        sim_real=args.sim_real,
     )
 
     if args.loop_mode == "while":
         rospy.loginfo("Starting main loop (while mode)")
       
-        while True:
-            start_time = time.monotonic()
-            visual_node.main_loop()
-            while (time.monotonic-start_time) > duration :
-                pass
-            print(f"depth_process {1/(time.monotonic()-start_time)} Hz")  
-    
+
+        visual_node.main_loop(duration)
+            
     elif args.loop_mode == "timer":
 
         rospy.loginfo("Starting main loop (timer mode)")
@@ -451,7 +504,7 @@ def main(args):
 
 if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(allow_abbrev=False)
 
     parser.add_argument("--logdir", type=str, default='/home/zzf/RL/unitree_rl/src/rl/traced', help="The directory which contains the config.json and model_*.pt files")
     
@@ -497,6 +550,8 @@ if __name__ == "__main__":
     parser.add_argument("--device", type=str, default="cpu", choices=["cpu", "cuda"],
         help="Select device for computation (cpu or cuda)",
     )
-
+    parser.add_argument("--sim_real", type=str, default="sim", choices=["sim", "real"],
+        help="Select sim or real for computation (sim or real)",
+    )
     args = parser.parse_args()
     main(args)

@@ -36,63 +36,13 @@ class Action(UnitreeRosReal):
         self.use_stand_policy = False
         self.use_parkour_policy = True
         self.use_sport_mode = False
-        self.duration = 0.02
+        self.duration = 0.01
         
         print("Action init done")
         
         self.start_ros_handlers()
         
-    # def __init__(self, cfg, *args, **kwargs, model_device="cuda", dryrun=False, mode="parkour"):
-    #     super().__init__(*args, robot_class_name= "Go2", **kwargs)
-        
-    #     rospy.init_node('rl_action', anonymous=True)
-        
-    #     self.model_device = model_device
-    #     self.dryrun = dryrun
-    #     self.mode = mode
-        
-    #     # Load configuration
-    #     self.cfg = cfg
-    #     self.dt = self.cfg["sim"]["dt"] if "sim" in self.cfg else 0.02
-    #     self.decimation = self.cfg["control"]["decimation"] if "control" in self.cfg else 1
-    #     self.duration = self.dt * self.decimation
-        
-    #     # Control gains
-    #     self.p_gains = np.array(cfg["control"]["stiffness"], dtype=np.float32) if "control" in cfg and "stiffness" in cfg["control"] else np.ones(12, dtype=np.float32) * 20.0
-    #     self.d_gains = np.array(cfg["control"]["damping"], dtype=np.float32) if "control" in cfg and "damping" in cfg["control"] else np.ones(12, dtype=np.float32) * 0.5
-        
-    #     # Initialize state variables
-    #     self.low_state = LowState()
-    #     self.low_cmd = LowCmd()
-    #     self.joy_stick_buffer = None
-    #     self.depth_image = None
-        
-    #     # Timing and counters
-    #     self.global_counter = 0
-    #     self.visual_update_interval = 5
-    #     self.sim_ite = 3
-        
-    #     # Policy flags
-    #     self.use_stand_policy = False
-    #     self.use_parkour_policy = False
-    #     self.use_sport_mode = True
-        
-    #     # Load simulation actions
-    #     self.actions_sim = torch.from_numpy(np.load('Action_sim_335-11_flat.npy')).to(self.model_device)
-        
-    #     # Initialize ROS publishers and subscribers
-    #     self.setup_ros_handlers()
-        
-    #     # Initialize observation buffers
-    #     self.n_proprio = 48  # Adjust based on your actual observation dimensions
-    #     self.n_depth_latent = 512  # Adjust based on your model
-    #     self.n_hist_len = 10  # Adjust based on your model
-    #     self.reset_obs()
-        
-    #     rospy.loginfo("RL Node initialized")
-        
 
-       
     def float32multiarray_to_tensor(self, msg):
         import numpy as np
         import torch
@@ -164,6 +114,7 @@ class Action(UnitreeRosReal):
             self.use_stand_policy = False
             self.use_sport_mode = False
             
+            #收集当前状态observation
             start_time = time.time()
             
             proprio = self.get_proprio()
@@ -301,7 +252,7 @@ def main(args):
     # Register models
     env_node.register_models(turn_obs=turn_obs, depth_encode=encode_depth, policy=actor_model)
     
-    # Warm up
+    # 模型预热
     env_node.warm_up()
     
     rospy.loginfo("Model and Policy are ready")
@@ -311,7 +262,7 @@ def main(args):
         rospy.Timer(rospy.Duration(env_node.duration), env_node.main_loop)
         rospy.spin()
     elif args.loop_mode == "while":
-        # Use while loop with rate control
+        # 固定频率执行主循环
         rate = rospy.Rate(1.0 / env_node.duration)
         while not rospy.is_shutdown():
             start_time = time.monotonic()
@@ -322,6 +273,7 @@ def main(args):
             remaining_time = env_node.duration - (time.monotonic() - start_time)
             if remaining_time > 0:
                 rate.sleep()
+            rospy.loginfo(f'loop duration: {time.monotonic() - start_time}')
     else:
         rospy.logerr(f"Unknown loop mode: {args.loop_mode}")
         return
