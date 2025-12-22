@@ -7,4 +7,7 @@
 # new environment variables
 
 # modified environment variables
+export CMAKE_PREFIX_PATH="/home/zzf/RL/unitree_rl/devel:$CMAKE_PREFIX_PATH"
 export PWD='/home/zzf/RL/unitree_rl/build'
+export ROSLISP_PACKAGE_DIRECTORIES='/home/zzf/RL/unitree_rl/devel/share/common-lisp'
+export ROS_PACKAGE_PATH="/home/zzf/RL/unitree_rl/src:$ROS_PACKAGE_PATH"

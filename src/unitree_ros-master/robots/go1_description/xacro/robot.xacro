@@ -100,7 +100,7 @@
     <xacro:leg name="RL" mirror="1"  mirror_dae="True"   front_hind="-1" front_hind_dae="False" />
 
     <xacro:depthCamera camID="1" name="face">
-        <origin rpy="${PI} 0 0" xyz="0.2785 0.0125 0.0167"/>
+        <origin rpy="${PI} ${PI/4} 0" xyz="0.2785 0.0125 0.0167"/>
     </xacro:depthCamera>
 
     <xacro:depthCamera camID="2" name="chin">

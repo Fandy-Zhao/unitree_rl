@@ -503,8 +503,21 @@ class UnitreeRosReal:
         return imu_obs
     
     def _get_delta_yaw_obs(self):
-        yaw = 0
-        delta_yaw, delta_next_yaw = 0, 0
+        # yaw = 0
+        quat_xyzw = torch.tensor([
+            self.low_state_buffer.imu.quaternion[1],
+            self.low_state_buffer.imu.quaternion[2],
+            self.low_state_buffer.imu.quaternion[3],
+            self.low_state_buffer.imu.quaternion[0],
+            ], device= self.model_device, dtype= torch.float32).unsqueeze(0)
+        _, _, yaw = get_euler_xyz(quat_xyzw)
+        
+        _,_,delta_yaw = (np.frombuffer(self.low_state_buffer.wirelessRemote[0:3], dtype=np.uint8).astype(np.float32) / 127.5) - 1.0 
+        
+        delta_yaw = delta_yaw  - yaw
+        delta_next_yaw = delta_yaw
+        print(f'yaw:{yaw}, delta_yaw:{delta_yaw}')
+        # delta_yaw, delta_next_yaw = 0, 0
         yaw_info = torch.tensor([[0, delta_yaw, delta_next_yaw]], device= self.model_device, dtype= torch.float32)
         return yaw_info
 
@@ -512,11 +525,12 @@ class UnitreeRosReal:
     # 不清楚逻辑
     def _get_commands_obs(self):
         if self.move_by_wireless_remote:
-            self.joy_stick_buffer = self.low_state_buffer.wirelessRemote[0:3]
+            self.joy_stick_buffer = (np.frombuffer(self.low_state_buffer.wirelessRemote[0:3], dtype=np.uint8).astype(np.float32) / 127.5) - 1.0
+            print("joy_stick_buffer.ly: ", self.joy_stick_buffer[0])
             
             if self.move_by_wireless_remote:
                 # left-y for forward/backward
-                ly = self.joy_stick_buffer[0]/255
+                ly = self.joy_stick_buffer[0]
                 if ly > self.lin_vel_deadband:
                     vx = (ly - self.lin_vel_deadband) / (1 - self.lin_vel_deadband) # (0, 1)
                     vx = vx * (self.cmd_px_range[1] - self.cmd_px_range[0]) + self.cmd_px_range[0]
@@ -526,7 +540,7 @@ class UnitreeRosReal:
                 else:
                     vx = 0
                 # left-x for turning left/right
-                lx = -self.joy_stick_buffer[1]/255
+                lx = -self.joy_stick_buffer[1]
                 if lx > self.ang_vel_deadband:
                     yaw = (lx - self.ang_vel_deadband) / (1 - self.ang_vel_deadband)
                     yaw = yaw * (self.cmd_pyaw_range[1] - self.cmd_pyaw_range[0]) + self.cmd_pyaw_range[0]
@@ -536,7 +550,7 @@ class UnitreeRosReal:
                 else:
                     yaw = 0
                 # right-x for side moving left/right
-                rx = -self.joy_stick_buffer[2]/255
+                rx = -self.joy_stick_buffer[2]
                 if rx > self.lin_vel_deadband:
                     vy = (rx - self.lin_vel_deadband) / (1 - self.lin_vel_deadband)
                     vy = vy * (self.cmd_py_range[1] - self.cmd_py_range[0]) + self.cmd_py_range[0]
@@ -545,10 +559,12 @@ class UnitreeRosReal:
                     vy = vy * (self.cmd_ny_range[1] - self.cmd_ny_range[0]) - self.cmd_ny_range[0]
                 else:
                     vy = 0
-                self.xyyaw_command = torch.tensor([[0.5, vy, yaw]], device= self.model_device, dtype= torch.float32)
+                self.xyyaw_command = torch.tensor([[vx, vy, yaw]], device= self.model_device, dtype= torch.float32)
                 
-            vx, _, _ = self.xyyaw_command[0, :]
+            # vx, _, _ = self.xyyaw_command[0, :]
+            vx, vy, yaw = self.xyyaw_command[0, :]
             commands = torch.tensor([[0, 0, vx]], device= self.model_device, dtype= torch.float32)
+            print("vx: ", vx)
             return commands
         else:
             return torch.tensor([[0., 0., 0.]], device=self.model_device)
@@ -617,6 +633,9 @@ class UnitreeRosReal:
                         last_actions, 
                         contact], dim=-1)
 
+        #打印proprio的维度
+        # print(f'proprio shape: {proprio.shape}')
+        
         self.proprio_history_buf = torch.where(
             (self.episode_length_buf <= 1)[:, None, None], 
             torch.stack([proprio] * self.n_hist_len, dim=1),
@@ -638,15 +657,15 @@ class UnitreeRosReal:
         #         )
         
         #打印proprio
-        print(f'angle vel: {ang_vel}')
-        print(f'imu: {imu}')
-        print(f'yaw info: {yaw_info}')
-        print(f'commands: {commands}')
-        print(f'parkour walk: {parkour_walk}')
-        print(f'dof pos: {dof_pos}')
-        print(f'dof vel: {dof_vel}')
-        print(f'last actions: {last_actions}')
-        print(f'contact: {contact}')
+        # print(f'angle vel: {ang_vel}')
+        # print(f'imu: {imu}')
+        # print(f'yaw info: {yaw_info}')
+        # print(f'commands: {commands}')
+        # print(f'parkour walk: {parkour_walk}')
+        # print(f'dof pos: {dof_pos}')
+        # print(f'dof vel: {dof_vel}')
+        # print(f'last actions: {last_actions}')
+        # print(f'contact: {contact}')
         
         self.episode_length_buf += 1
 

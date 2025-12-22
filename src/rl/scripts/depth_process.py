@@ -48,6 +48,7 @@ class VisualHandlerNode:
     """ A wrapper class for the realsense camera """
     def __init__(self,
             cfg: dict,
+            device: str = "cpu",
             cropping: list = [0, 0, 0, 0], # top, bottom, left, right
             rs_resolution: tuple = (480, 270), # width, height for the realsense camera)
             rs_fps: int= 30,
@@ -60,6 +61,7 @@ class VisualHandlerNode:
         rospy.init_node("depth_image", anonymous=True)
         
         self.cfg = cfg
+        self.device = device
         self.cropping = cropping
         self.rs_resolution = rs_resolution
         self.rs_fps = rs_fps
@@ -216,6 +218,9 @@ class VisualHandlerNode:
             # 1. 转换为NumPy数组
             depth_image_np = self.depth_image
             
+            # 2. 垂直翻转图像（如果需要）
+            depth_image_np = np.flipud(depth_image_np)
+            
             # 记录原始尺寸（仅第一次）
             if self.original_size is None:
                 self.original_size = (depth_image_np.shape[0], depth_image_np.shape[1])
@@ -230,12 +235,12 @@ class VisualHandlerNode:
                 neginf=self.depth_range[0]
             )
             
-            # 3. 转换为PyTorch张量
+            # 3. 转换为PyTorch张量并移动到指定设备
             # 注意：深度图应该是单通道，所以unsqueeze(0).unsqueeze(0) 添加批次和通道维度
-            depth_tensor = torch.from_numpy(depth_image_np.astype(np.float32)).unsqueeze(0).unsqueeze(0)
+            depth_tensor = torch.from_numpy(depth_image_np.astype(np.float32)).unsqueeze(0).unsqueeze(0).to(self.device)
             
             # 记录初始张量形状
-            rospy.logdebug_once(f"初始张量形状: {depth_tensor.shape}")
+            rospy.logdebug_once(f"初始张量形状: {depth_tensor.shape}，设备: {depth_tensor.device}")
             
             # 4. 计算并应用裁剪
             if use_dynamic_crop:
@@ -268,14 +273,13 @@ class VisualHandlerNode:
             )
             rospy.logdebug_once(f"缩放后张量形状: {depth_tensor.shape}")
             
-            # 7. 【修复1】先保存用于发布的数据（归一化后，但未减去0.5的数据）
             # 用于发布的深度数据（反归一化到原始范围）
             depth_for_publish = depth_tensor.clone()
             depth_for_publish = depth_for_publish * (self.depth_range[1] - self.depth_range[0]) + self.depth_range[0]
             
-            # 【修复2】确保是2D数组 (58, 87)
+            # 【修复2】确保是2D数组 (58, 87)，移回CPU用于发布
             depth_for_publish_np = depth_for_publish.squeeze().cpu().numpy().astype(np.float32)
-            
+
             # 验证数组形状
             if depth_for_publish_np.ndim != 2:
                 rospy.logwarn(f"发布数据维度错误: {depth_for_publish_np.shape}，期望 (58, 87)")
@@ -386,7 +390,10 @@ class VisualHandlerNode:
 
     def main_loop(self):
         """用于'while'循环模式的主循环函数"""
+
         depth_image_pyt = self.get_depth_frame_sim()
+        
+
         
         if depth_image_pyt is not None:
             
@@ -409,11 +416,12 @@ def main(args):
         config_dict = json.load(f, object_pairs_hook=OrderedDict)
     print(config_dict)
         
-    device = "cpu"
+    device = args.device
     duration = 0.001
 
     visual_node = VisualHandlerNode(
         cfg=json.load(open(config_path, "r")),
+        device=device,
         cropping=[args.crop_top, args.crop_bottom, args.crop_left, args.crop_right],
         rs_resolution=(args.width, args.height),
         rs_fps=args.fps,
@@ -421,13 +429,16 @@ def main(args):
 
     if args.loop_mode == "while":
         rospy.loginfo("Starting main loop (while mode)")
-        rate = rospy.Rate(1.0 / duration)  # 使用rospy.Rate控制频率
-        while not rospy.is_shutdown():     
+      
+        while True:
             start_time = time.monotonic()
             visual_node.main_loop()
-            # print(f"main_loop duration: {1/(time.monotonic() - start_time)} hz")
-            rate.sleep()
+            while (time.monotonic-start_time) > duration :
+                pass
+            print(f"depth_process {1/(time.monotonic()-start_time)} Hz")  
+    
     elif args.loop_mode == "timer":
+
         rospy.loginfo("Starting main loop (timer mode)")
         visual_node.start_main_loop_timer(duration)
         
@@ -482,6 +493,9 @@ if __name__ == "__main__":
     parser.add_argument("--loop_mode", type=str, default="while",
         choices=["while", "timer"],
         help="Select which mode to run the main policy control iteration",
+    )
+    parser.add_argument("--device", type=str, default="cpu", choices=["cpu", "cuda"],
+        help="Select device for computation (cpu or cuda)",
     )
 
     args = parser.parse_args()

@@ -58,7 +58,7 @@ private:
     const float _duration_1 = 700;
     float _percent_1 = 0;
 
-    // 多线程
+    // // 多线程
     std::thread _inferenceThread; // 推理线程
     std::mutex _mutex;  // 互斥锁
     std::atomic<bool> _threadRunning {true};  // 线程循环启动标志位

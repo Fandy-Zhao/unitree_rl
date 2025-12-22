@@ -91,177 +91,7 @@ class Action(UnitreeRosReal):
         
     #     rospy.loginfo("RL Node initialized")
         
-    # def setup_ros_handlers(self):
-    #     """Setup ROS publishers and subscribers"""
-    #     # Publisher for low-level commands
-    #     self.cmd_pub = rospy.Publisher('/low_cmd', LowCmd, queue_size=1)
-        
-    #     # Subscriber for low-level state
-    #     #由state_rl单独发送
-    #     rospy.Subscriber('/rl/low_state', LowState, self.low_state_callback)
-        
-    #     # Subscriber for depth image
-    #     rospy.Subscriber('/depth/image', Image, self.depth_image_callback)
-        
-    #     # Subscriber for joystick (you'll need to define this message type)
-    #     # rospy.Subscriber('/joy', Joy, self.joy_callback)
-        
-    #     # Initialize CV bridge for image conversion
-    #     self.bridge = CvBridge()
-        
-    # def low_state_callback(self, msg):
-    #     """Callback for low state messages"""
-    #     # self.get_logger().warn("Low state message received.")
-    #     """ store and handle proprioception data """
-    #     self.low_state_buffer = msg # keep the latest low state
 
-    #     ################### refresh dof_pos and dof_vel ######################
-    #     # for sim_idx in range(self.NUM_DOF):
-    #     #     real_idx = self.dof_map[sim_idx]
-    #     #     self.dof_pos_[0, sim_idx] = self.low_state_buffer.motor_state[real_idx].q * self.dof_signs[sim_idx]
-    #     # for sim_idx in range(self.NUM_DOF):
-    #     #     real_idx = self.dof_map[sim_idx]
-    #     #     self.dof_vel_[0, sim_idx] = self.low_state_buffer.motor_state[real_idx].dq * self.dof_signs[sim_idx]
-        
-    # def depth_image_callback(self, msg):
-    #     """Callback for depth image messages"""
-    #     try:
-    #         # Convert ROS image to OpenCV image
-    #         cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding="32FC1")
-    #         # Normalize or process the depth image as needed
-    #         self.depth_image = torch.from_numpy(cv_image).float().to(self.model_device)
-    #         self.depth_image = self.depth_image.unsqueeze(0).unsqueeze(0)  # Add batch and channel dimensions
-    #     except Exception as e:
-    #         rospy.logerr(f"Error processing depth image: {e}")
-            
-    # def joy_callback(self, msg):
-    #     """Callback for joystick messages"""
-    #     # Process joystick message based on your message format
-    #     # This is a placeholder - you'll need to implement based on your actual joystick message
-    #     self.joy_stick_buffer = msg
-        
-    # def get_proprio(self):
-    #     start_time = time.monotonic()
-
-    #     ang_vel = self._get_ang_vel_obs()  # (1, 3)
-    #     ang_vel_time = time.monotonic()
-
-    #     imu = self._get_imu_obs()  # (1, 2)
-    #     imu_time = time.monotonic()
-
-    #     yaw_info = self._get_delta_yaw_obs()  # (1, 3)
-    #     yaw_time = time.monotonic()
-
-    #     commands = self._get_commands_obs()  # (1, 3)
-    #     commands_time = time.monotonic()
-
-    #     if self.mode == "parkour":
-    #         parkour_walk = torch.tensor([[1, 0]], device= self.model_device, dtype= torch.float32) # parkour
-    #     elif self.mode == "walk":
-    #         parkour_walk = torch.tensor([[0, 1]], device= self.model_device, dtype= torch.float32) # walk
-
-    #     dof_pos = self._get_dof_pos_obs()  # (1, 12)
-    #     dof_pos_time = time.monotonic()
-
-    #     dof_vel = self._get_dof_vel_obs()  # (1, 12)
-    #     dof_vel_time = time.monotonic()
-
-    #     last_actions = self._get_last_actions_obs().view(1, -1)  # (1, 12)
-    #     last_action_time = time.monotonic()
-
-    #     contact = self._get_contact_filt_obs()  # (1, 4)
-    #     contact_time = time.monotonic()
-        
-    #     proprio = torch.cat([ang_vel, imu, yaw_info, commands, parkour_walk,
-    #                     dof_pos, dof_vel,
-    #                     last_actions, 
-    #                     contact], dim=-1)
-
-    #     self.proprio_history_buf = torch.where(
-    #         (self.episode_length_buf <= 1)[:, None, None], 
-    #         torch.stack([proprio] * self.n_hist_len, dim=1),
-    #         torch.cat([
-    #             self.proprio_history_buf[:, 1:],
-    #             proprio.unsqueeze(1)
-    #         ], dim=1)
-    #     )
-    #     end_time = time.monotonic()
-
-    #     # print('ang vel time: {:.5f}'.format(ang_vel_time - start_time),
-    #     #         'imu time: {:.5f}'.format(imu_time - ang_vel_time),
-    #     #         'yaw time: {:.5f}'.format(yaw_time - imu_time),
-    #     #         'command time: {:.5f}'.format(commands_time - yaw_time),
-    #     #         'dof pos time: {:.5f}'.format(dof_pos_time - commands_time),
-    #     #         'dof vel time: {:.5f}'.format(dof_vel_time - dof_pos_time),
-    #     #         'last action time: {:.5f}'.format(last_action_time - dof_vel_time),
-    #     #         'contact time: {:.5f}'.format(contact_time - last_action_time)
-    #     #         )
-        
-    #     self.episode_length_buf += 1
-
-    #     return proprio
-
-    # def _get_history_proprio(self):
-    #     """Get history of proprioceptive observations"""
-    #     # This is a placeholder - implement based on your history buffer
-    #     return torch.zeros(1, self.n_hist_len, self.n_proprio, device=self.model_device)
-    
-    # def _get_depth_image(self):
-    #     """Get current depth image"""
-    #     if self.depth_image is None:
-    #         # Return a zero image if no depth image received yet
-    #         return torch.zeros(1, 1, 58, 87, device=self.model_device)  # Adjust dimensions based on your model
-    #     return self.depth_image
-    
-    # def send_action(self, action):
-    #     """Send action commands to robot"""
-    #     # Convert action tensor to numpy array
-    #     if isinstance(action, torch.Tensor):
-    #         action = action.cpu().numpy().flatten()
-        
-    #     # Create low command
-    #     low_cmd = LowCmd()
-    #     low_cmd.header = Header()
-    #     low_cmd.header.stamp = rospy.Time.now()
-        
-    #     # Fill motor commands (12 motors)
-    #     for i in range(12):
-    #         motor_cmd = MotorCmd()
-    #         motor_cmd.mode = 0x0A  # Position mode
-    #         motor_cmd.q = action[i] if i < len(action) else 0.0
-    #         motor_cmd.dq = 0.0
-    #         motor_cmd.tau = 0.0
-    #         motor_cmd.Kp = self.p_gains[i]
-    #         motor_cmd.Kd = self.d_gains[i]
-    #         low_cmd.motorCmd[i] = motor_cmd
-            
-    #     # Publish command
-    #     if not self.dryrun:
-    #         self.cmd_pub.publish(low_cmd)
-    #     else:
-    #         rospy.loginfo(f"Dry run - Action: {action[:4]}...")  # Log first 4 actions
-            
-    # def send_stand_action(self, action):
-    #     """Send stand action (placeholder)"""
-    #     self.send_action(action)
-        
-    # def get_stand_action(self):
-    #     """Get stand action (placeholder)"""
-    #     return torch.zeros(12, device=self.model_device)
-    
-    # def _sport_mode_change(self, mode_id):
-    #     """Change sport mode (placeholder)"""
-    #     rospy.loginfo(f"Changing sport mode to: {mode_id}")
-        
-    # def _sport_state_change(self, state):
-    #     """Change sport state (placeholder)"""
-    #     rospy.loginfo(f"Changing sport state to: {state}")
-        
-    # def reset_obs(self):
-    #     """Reset observation buffers"""
-    #     self.proprio_history = []
-    #     self.last_depth_image = None
-    #     self.depth_latent_yaw = None
        
     def float32multiarray_to_tensor(self, msg):
         import numpy as np
@@ -368,18 +198,18 @@ class Action(UnitreeRosReal):
             # self.sim_ite += 1
             
             self.send_action(action)
-            rospy.logdebug(f'Action: {action}')
+            # rospy.logdebug(f'Action: {action}')
             
             publish_time = time.time()
             
-            rospy.loginfo(f"Loop timings: "
-                         f"get proprio: {get_pro_time - start_time:.5f}, "
-                         f"get hist pro: {get_hist_pro_time - get_pro_time:.5f}, "
-                         f"get_depth: {get_obs_time - get_hist_pro_time:.5f}, "
-                         f"get obs: {get_obs_time - start_time:.5f}, "
-                         f"turn_obs: {turn_obs_time - get_obs_time:.5f}, "
-                         f"policy: {policy_time - turn_obs_time:.5f}, "
-                         f"total: {publish_time - start_time:.5f}")
+            # rospy.loginfo(f"Loop timings: "
+            #              f"get proprio: {get_pro_time - start_time:.5f}, "
+            #              f"get hist pro: {get_hist_pro_time - get_pro_time:.5f}, "
+            #              f"get_depth: {get_obs_time - get_hist_pro_time:.5f}, "
+            #              f"get obs: {get_obs_time - start_time:.5f}, "
+            #              f"turn_obs: {turn_obs_time - get_obs_time:.5f}, "
+            #              f"policy: {policy_time - turn_obs_time:.5f}, "
+            #              f"total: {publish_time - start_time:.5f}")
                          
             self.global_counter += 1
             

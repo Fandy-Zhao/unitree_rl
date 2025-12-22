@@ -42,11 +42,11 @@ void State_RL::_init_buffers()
     this->_obs_buffer_tensor = torch::zeros({1, this->_num_obs_history*this->_num_obs});
 }
 
-void State_RL::_loadPolicy()  // 加载JIT模型
-{
-    this->_body_module = torch::jit::load(BODY_MODEL_PATH);
-    this->_adapt_module = torch::jit::load(ADAPT_MODEL_PATH);
-}
+// void State_RL::_loadPolicy()  // 加载JIT模型
+// {
+//     this->_body_module = torch::jit::load(BODY_MODEL_PATH);
+//     this->_adapt_module = torch::jit::load(ADAPT_MODEL_PATH);
+// }
 
 torch::Tensor State_RL::QuatRotateInverse(torch::Tensor q, torch::Tensor v)
 {
@@ -59,54 +59,54 @@ torch::Tensor State_RL::QuatRotateInverse(torch::Tensor q, torch::Tensor v)
     return a - b + c;
 }
 
-void State_RL::_observations_compute()
-{
-    // 获取当前的观测信息
+// void State_RL::_observations_compute()
+// {
+//     // 获取当前的观测信息
 
-    torch::Tensor base_quat = torch::tensor({{_lowState->imu.quaternion[1], _lowState->imu.quaternion[2], _lowState->imu.quaternion[3], _lowState->imu.quaternion[0]}});
+//     torch::Tensor base_quat = torch::tensor({{_lowState->imu.quaternion[1], _lowState->imu.quaternion[2], _lowState->imu.quaternion[3], _lowState->imu.quaternion[0]}});
 
-    // 重力观测
-    torch::Tensor projected_gravity = QuatRotateInverse(base_quat, this->_gravity_vec);
+//     // 重力观测
+//     torch::Tensor projected_gravity = QuatRotateInverse(base_quat, this->_gravity_vec);
 
-    // 命令观测
-    _userValue = _lowState->userValue;  // 获取用户输入
-    _getUserCmd();  // 解析用户输入命令，更新速度命令
-    torch::Tensor commands = torch::cat({torch::tensor({_vCmdBody(0)}), torch::tensor({_vCmdBody(1)}), torch::tensor({_dYawCmd})}, -1);
+//     // 命令观测
+//     _userValue = _lowState->userValue;  // 获取用户输入
+//     _getUserCmd();  // 解析用户输入命令，更新速度命令
+//     torch::Tensor commands = torch::cat({torch::tensor({_vCmdBody(0)}), torch::tensor({_vCmdBody(1)}), torch::tensor({_dYawCmd})}, -1);
 
-    // 相对关节角度
-    torch::Tensor dof_pos_tensor = torch::tensor({_lowState->motorState[3].q-this->_default_dof_pos[3], _lowState->motorState[4].q-this->_default_dof_pos[4], _lowState->motorState[5].q-this->_default_dof_pos[5],
-                                                  _lowState->motorState[0].q-this->_default_dof_pos[0], _lowState->motorState[1].q-this->_default_dof_pos[1], _lowState->motorState[2].q-this->_default_dof_pos[2],
-                                                  _lowState->motorState[9].q-this->_default_dof_pos[9], _lowState->motorState[10].q-this->_default_dof_pos[10], _lowState->motorState[11].q-this->_default_dof_pos[11],
-                                                  _lowState->motorState[6].q-this->_default_dof_pos[6], _lowState->motorState[7].q-this->_default_dof_pos[7], _lowState->motorState[8].q-this->_default_dof_pos[8]});
-    float dof_pos_temp[12] = {_lowState->motorState[3].q, _lowState->motorState[4].q, _lowState->motorState[5].q,
-                              _lowState->motorState[0].q, _lowState->motorState[1].q, _lowState->motorState[2].q,
-                              _lowState->motorState[9].q, _lowState->motorState[10].q, _lowState->motorState[11].q,
-                              _lowState->motorState[6].q, _lowState->motorState[7].q, _lowState->motorState[8].q};
-    //saveArrayToFile(dof_pos_temp, 12, "obs_values_cpp.txt");
+//     // 相对关节角度
+//     torch::Tensor dof_pos_tensor = torch::tensor({_lowState->motorState[3].q-this->_default_dof_pos[3], _lowState->motorState[4].q-this->_default_dof_pos[4], _lowState->motorState[5].q-this->_default_dof_pos[5],
+//                                                   _lowState->motorState[0].q-this->_default_dof_pos[0], _lowState->motorState[1].q-this->_default_dof_pos[1], _lowState->motorState[2].q-this->_default_dof_pos[2],
+//                                                   _lowState->motorState[9].q-this->_default_dof_pos[9], _lowState->motorState[10].q-this->_default_dof_pos[10], _lowState->motorState[11].q-this->_default_dof_pos[11],
+//                                                   _lowState->motorState[6].q-this->_default_dof_pos[6], _lowState->motorState[7].q-this->_default_dof_pos[7], _lowState->motorState[8].q-this->_default_dof_pos[8]});
+//     float dof_pos_temp[12] = {_lowState->motorState[3].q, _lowState->motorState[4].q, _lowState->motorState[5].q,
+//                               _lowState->motorState[0].q, _lowState->motorState[1].q, _lowState->motorState[2].q,
+//                               _lowState->motorState[9].q, _lowState->motorState[10].q, _lowState->motorState[11].q,
+//                               _lowState->motorState[6].q, _lowState->motorState[7].q, _lowState->motorState[8].q};
+//     //saveArrayToFile(dof_pos_temp, 12, "obs_values_cpp.txt");
 
-    // 关节角速度
-    torch::Tensor dof_vel_tensor = torch::tensor({_lowState->motorState[3].dq, _lowState->motorState[4].dq, _lowState->motorState[5].dq,
-                                                  _lowState->motorState[0].dq, _lowState->motorState[1].dq, _lowState->motorState[2].dq,
-                                                  _lowState->motorState[9].dq, _lowState->motorState[10].dq, _lowState->motorState[11].dq,
-                                                  _lowState->motorState[6].dq, _lowState->motorState[7].dq, _lowState->motorState[8].dq});
+//     // 关节角速度
+//     torch::Tensor dof_vel_tensor = torch::tensor({_lowState->motorState[3].dq, _lowState->motorState[4].dq, _lowState->motorState[5].dq,
+//                                                   _lowState->motorState[0].dq, _lowState->motorState[1].dq, _lowState->motorState[2].dq,
+//                                                   _lowState->motorState[9].dq, _lowState->motorState[10].dq, _lowState->motorState[11].dq,
+//                                                   _lowState->motorState[6].dq, _lowState->motorState[7].dq, _lowState->motorState[8].dq});
 
-    // 角速度
-    torch::Tensor body_ang_vel = torch::tensor({{_lowState->imu.gyroscope[0], _lowState->imu.gyroscope[1], _lowState->imu.gyroscope[2]}});
-    //torch::Tensor body_ang_vel = QuatRotateInverse(base_quat, ang_vel);
+//     // 角速度
+//     torch::Tensor body_ang_vel = torch::tensor({{_lowState->imu.gyroscope[0], _lowState->imu.gyroscope[1], _lowState->imu.gyroscope[2]}});
+//     //torch::Tensor body_ang_vel = QuatRotateInverse(base_quat, ang_vel);
 
-    // // 是否触地，这个好像不太对
-    // torch::Tensor contact_states = torch::tensor({(*_contact)(1),(*_contact)(0),(*_contact)(3),(*_contact)(2)});
+//     // // 是否触地，这个好像不太对
+//     // torch::Tensor contact_states = torch::tensor({(*_contact)(1),(*_contact)(0),(*_contact)(3),(*_contact)(2)});
 
-    this->_observation = torch::cat({body_ang_vel.view({1, -1}) * scale_ang_vel,
-                                projected_gravity.view({1, -1}),
-                                commands.view({1, -1}) * scale_commands.view({1, -1}),
-                                dof_pos_tensor.view({1, -1}) * scale_dof_pos,
-                                dof_vel_tensor.view({1, -1}) * scale_dof_vel,
-                                _action.view({1, -1})}, -1);
-    //std::cout<<"obs shape: "<<_observation.sizes()<<std::endl;
-    this->_observation = torch::clamp(this->_observation, -clip_observations, clip_observations);
+//     this->_observation = torch::cat({body_ang_vel.view({1, -1}) * scale_ang_vel,
+//                                 projected_gravity.view({1, -1}),
+//                                 commands.view({1, -1}) * scale_commands.view({1, -1}),
+//                                 dof_pos_tensor.view({1, -1}) * scale_dof_pos,
+//                                 dof_vel_tensor.view({1, -1}) * scale_dof_vel,
+//                                 _action.view({1, -1})}, -1);
+//     //std::cout<<"obs shape: "<<_observation.sizes()<<std::endl;
+//     this->_observation = torch::clamp(this->_observation, -clip_observations, clip_observations);
     
-}
+// }
 
 void State_RL::_getUserCmd(){
     /* Movement */
@@ -120,34 +120,34 @@ void State_RL::_getUserCmd(){
     _dYawCmdPast = _dYawCmd;
 }
 
-void State_RL::_obs_buffer_update()
-{
-    // 更新输入的历史观测buffer
-    // 每次更新时，移除最旧的61个元素，并追加新的观测数据
-    _observations_compute(); // 获取新观测
-    this->_obs_buffer_tensor = torch::cat({this->_obs_buffer_tensor.narrow(1, this->_num_obs, (this->_num_obs_history*this->_num_obs-this->_num_obs)), this->_observation.view({1, this->_num_obs})}, -1);
-}
+// void State_RL::_obs_buffer_update()
+// {
+//     // 更新输入的历史观测buffer
+//     // 每次更新时，移除最旧的61个元素，并追加新的观测数据
+//     _observations_compute(); // 获取新观测
+//     this->_obs_buffer_tensor = torch::cat({this->_obs_buffer_tensor.narrow(1, this->_num_obs, (this->_num_obs_history*this->_num_obs-this->_num_obs)), this->_observation.view({1, this->_num_obs})}, -1);
+// }
 
-void State_RL::_action_compute()
-{
-    // 以50hz调用rl_policy来生成关节角度
-    torch::Tensor latent = _adapt_module.forward({this->_obs_buffer_tensor}).toTensor();
-    this->_action = _body_module.forward({torch::cat({_observation, latent}, -1)}).toTensor();
-    this->_action = torch::clamp(this->_action, -clip_actions, clip_actions);
+// void State_RL::_action_compute()
+// {
+//     // 以50hz调用rl_policy来生成关节角度
+//     torch::Tensor latent = _adapt_module.forward({this->_obs_buffer_tensor}).toTensor();
+//     this->_action = _body_module.forward({torch::cat({_observation, latent}, -1)}).toTensor();
+//     this->_action = torch::clamp(this->_action, -clip_actions, clip_actions);
 
-    torch::Tensor actions_scaled = this->_action * this->action_scale;
-    int indices[] = {0, 3, 6, 9};
-    for (int i : indices)
-        actions_scaled[0][i] *= this->hip_scale_reduction; // 模型顺序
+//     torch::Tensor actions_scaled = this->_action * this->action_scale;
+//     int indices[] = {0, 3, 6, 9};
+//     for (int i : indices)
+//         actions_scaled[0][i] *= this->hip_scale_reduction; // 模型顺序
 
-    for(int i=0; i<12; i++)
-    {
-        this->_joint_q[i] = actions_scaled[0][this->dof_mapping[i]].item<double>();
-        this->_joint_q[i] += this->_default_dof_pos[i];
-    }
+//     for(int i=0; i<12; i++)
+//     {
+//         this->_joint_q[i] = actions_scaled[0][this->dof_mapping[i]].item<double>();
+//         this->_joint_q[i] += this->_default_dof_pos[i];
+//     }
 
-    //saveArrayToFile(this->_joint_q, 12, "action_values_cpp.txt");
-}
+//     //saveArrayToFile(this->_joint_q, 12, "action_values_cpp.txt");
+// }
 
 void State_RL::enter()
 {
@@ -187,39 +187,40 @@ void State_RL::enter()
     this->init_pub_sub();
 }
 
-void State_RL::_inferenceLoop() {  // 模型推理线程
-    // std::lock_guard是C++11引入的一个RAII风格的互斥锁包装器
-    // 当std::lock_guard对象被创建时，会自动尝试锁定给定的互斥锁_mutex，并在std::lock_guard对象的生命周期结束时自动解锁该互斥锁
-    while (_threadRunning) // 进入线程循环
-    {
-        _start_RL_Time = getSystemTime();  // 记录开始执行的系统时间
-        _obs_buffer_update(); // 更新一次观测buffer
+// void State_RL::_inferenceLoop() {  // 模型推理线程
+//     // std::lock_guard是C++11引入的一个RAII风格的互斥锁包装器
+//     // 当std::lock_guard对象被创建时，会自动尝试锁定给定的互斥锁_mutex，并在std::lock_guard对象的生命周期结束时自动解锁该互斥锁
+//     while (_threadRunning) // 进入线程循环
+//     {
+//         _start_RL_Time = getSystemTime();  // 记录开始执行的系统时间
+//         _obs_buffer_update(); // 更新一次观测buffer
 
-        long long obs_Time = getSystemTime();
-        // std::cout << "obs compute time: " << obs_Time-_start_RL_Time << std::endl;
+//         long long obs_Time = getSystemTime();
+//         // std::cout << "obs compute time: " << obs_Time-_start_RL_Time << std::endl;
         
-        {  // 作用域界定，用于控制下面第一行的生命周期，锁会在之后由析构函数释放
-            std::lock_guard<std::mutex> lock(_mutex);
-            _action_compute(); // 执行模型推理
-        }
+//         {  // 作用域界定，用于控制下面第一行的生命周期，锁会在之后由析构函数释放
+//             std::lock_guard<std::mutex> lock(_mutex);
+//             _action_compute(); // 执行模型推理
+//         }
 
-        long long action_Time = getSystemTime();
-        // std::cout << "action compute time: " << action_Time-_start_RL_Time << " us"<< "频率: "<< 1000000.0/(action_Time-_start_RL_Time) << " Hz"<< std::endl;
+//         long long action_Time = getSystemTime();
+//         // std::cout << "action compute time: " << action_Time-_start_RL_Time << " us"<< "频率: "<< 1000000.0/(action_Time-_start_RL_Time) << " Hz"<< std::endl;
 
-        _inferenceReady = true;
-        this->_percent_1 = 0;
-        total++;
-        if(absoluteWait(_start_RL_Time, (long long)(this->_RL_dt * 1000000)))  // 绝对等待，保证控制周期，即线程频率50hz)
-        {
-            success++;
-        }
-        std::cout << "success rate: " << (double)success/(double)total << std::endl;
+//         _inferenceReady = true;
+//         this->_percent_1 = 0;
+//         total++;
+//         if(absoluteWait(_start_RL_Time, (long long)(this->_RL_dt * 1000000)))  // 绝对等待，保证控制周期，即线程频率50hz)
+//         {
+//             success++;
+//         }
+//         std::cout << "success rate: " << (double)success/(double)total << std::endl;
 
-    }
-}
+//     }
+// }
 
 void State_RL::run()
 {
+    
     // 以500hz实时发送关节角度
     // 互斥锁防止数据访问冲突
     // if (_inferenceReady) {
@@ -229,19 +230,19 @@ void State_RL::run()
         // _inferenceReady = false;
     // }
 
-    // this->_percent_1 += (float)1 / this->_duration_1;
-    // this->_percent_1 = this->_percent_1 > 1 ? 1 : this->_percent_1;
-    // for (int j = 0; j < 12; j++)  // 跟上一次的位置平滑滤波
-    // {
-    //     _lowCmd->motorCmd[j].mode = 10;
-    //     _lowCmd->motorCmd[j].q = (1 - this->_percent_1) * this->_last_targetPos_rl[j] + this->_percent_1 * this->_targetPos_rl[j];
-    //     _lowCmd->motorCmd[j].dq = 0;
-    //     _lowCmd->motorCmd[j].Kp = this->Kp;  // TODO: 记得改一下值
-    //     _lowCmd->motorCmd[j].Kd = this->Kd;
-    //     _lowCmd->motorCmd[j].tau = 0;
+    this->_percent_1 += (float)1 / this->_duration_1;
+    this->_percent_1 = this->_percent_1 > 1 ? 1 : this->_percent_1;
+    for (int j = 0; j < 12; j++)  // 跟上一次的位置平滑滤波
+    {
+        _lowCmd->motorCmd[j].mode = 10;
+        _lowCmd->motorCmd[j].q = (1 - this->_percent_1) * this->_last_targetPos_rl[j] + this->_percent_1 * this->_targetPos_rl[j];
+        _lowCmd->motorCmd[j].dq = 0;
+        _lowCmd->motorCmd[j].Kp = this->Kp;  // TODO: 记得改一下值
+        _lowCmd->motorCmd[j].Kd = this->Kd;
+        _lowCmd->motorCmd[j].tau = 0;
 
-    //     this->_last_targetPos_rl[j] = _targetPos_rl[j];
-    // }
+        this->_last_targetPos_rl[j] = _targetPos_rl[j];
+    }
 
     //以100hz发送关节角度
 
@@ -301,9 +302,19 @@ void State_RL::send_low_state()
         lowState_rl.motorState[i].dq   = _lowState->motorState[i].dq;
         lowState_rl.motorState[i].tauEst  = _lowState->motorState[i].tauEst;
     }
-    lowState_rl.wirelessRemote[0] = _lowState->userValue.ly;
-    lowState_rl.wirelessRemote[1] = _lowState->userValue.lx;
-    lowState_rl.wirelessRemote[2] = _lowState->userValue.rx;
+
+    lowState_rl.wirelessRemote[0] = static_cast<uint8_t>((_lowState->userValue.ly + 1.0) * 127.5f);
+    lowState_rl.wirelessRemote[1] = static_cast<uint8_t>((_lowState->userValue.lx + 1.0) * 127.5f);
+    lowState_rl.wirelessRemote[2] = static_cast<uint8_t>((_lowState->userValue.rx + 1.0) * 127.5f);
+
+    // lowState_rl.footForce[0] = _lowState->userCmd.footForce[0];
+    // lowState_rl.footForce[1] = _lowState->userCmd.footForce[1];
+    // lowState_rl.footForce[2] = _lowState->userCmd.footForce[2];
+    // lowState_rl.footForce[3] = _lowState->userCmd.footForce[3];
+    
+    std::cout << "userValue.ly: " << _lowState->userValue.ly << std::endl;
+    std::cout << "userValue.lx: " << _lowState->userValue.lx << std::endl;
+    std::cout << "userValue.rx: " << _lowState->userValue.rx << std::endl;
         
     this->_lowState_pub.publish(this->lowState_rl);
 }
@@ -313,9 +324,10 @@ void State_RL::lowCmdCallback(const unitree_legged_msgs::LowCmd::ConstPtr& msg)
     // std::cout << "lowCmdCallback" << std::endl;
     // 从msg中提取数据并赋值给_lowCmd_rl
     for(int i(0); i < 12; ++i){
+        this->_targetPos_rl[i] = msg->motorCmd[i].q;
         // _lowCmd->motorCmd[i].mode = msg->motorCmd[i].mode;
-        _lowCmd->motorCmd[i].q = msg->motorCmd[i].q;  
-        _lowCmd->motorCmd[i].dq = msg->motorCmd[i].dq;
+        // _lowCmd->motorCmd[i].q = msg->motorCmd[i].q;  
+        // _lowCmd->motorCmd[i].dq = msg->motorCmd[i].dq;
         // _lowCmd->motorCmd[i].tau = msg->motorCmd[i].tau;
         // _lowCmd->motorCmd[i].Kd = msg->motorCmd[i].Kd;
         // _lowCmd->motorCmd[i].Kp = msg->motorCmd[i].Kp;
