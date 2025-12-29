@@ -2,7 +2,7 @@
 
 ## 概述
 
-本包是一个基于强化学习的Unitree机器人控制系统，专门为Unitree Go2机器人设计。该系统集成了深度视觉处理、运动控制策略和实时ROS通信，支持复杂的机器人运动任务和导航功能。
+本包是一个基于强化学习的Unitree机器人控制系统。该系统集成了深度视觉处理、运动控制策略和实时ROS通信，支持复杂的机器人运动任务和导航功能。
 
 ## 包结构
 
@@ -18,7 +18,7 @@ rl/
 ├── src/                    # 源代码目录
 │   └── rl/                # Python模块
 │       ├── __init__.py
-│       ├── unitree_ros_real.py  # ROS实时通信核心模块
+│       ├── unitree_ros_real.py  # ROS实时通信核心模块，负责输入数据的接收和处理
 │       └── utils.py       # 工具函数
 ├── include/               # C++头文件（当前为空）
 ├── rsl_rl/               # 强化学习核心库
@@ -36,7 +36,8 @@ rl/
 │   │   └── utils/        # 工具函数
 │   ├── setup.py          # Python包安装配置
 │   └── README.md         # RSL库文档
-├── model/                # 训练好的模型文件
+|—— traced/               # 需要调用的模型文件
+├── model/                # 存放训练好的模型文件
     ├── base_jit.pt       # 基础运动模型
     ├── my_base_jit.pt    # 自定义基础模型
     ├── vision_weight.pt  # 视觉权重模型
@@ -169,6 +170,6 @@ roslaunch rl rl.launch
 
 ## 待完善完善功能
 - [ ] 完善launch文件，包括参数配置
-
+- [ ] 参数没有对齐（网络参数，控制参数，机器人结构参数）
 
 

@@ -280,12 +280,12 @@ def main(args):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(allow_abbrev=False)
     parser.add_argument("--logdir", type=str, default='/home/zzf/RL/unitree_rl/src/rl/traced', 
                        help="Directory containing config.json and model files")
     parser.add_argument("--nodryrun", action="store_true", default=True,
                        help="Disable dryrun mode")
-    parser.add_argument("--loop_mode", type=str, default="timer",
+    parser.add_argument("--loop_mode", type=str, default="while",
                        choices=["while", "timer"],
                        help="Main loop execution mode")
     parser.add_argument("--mode", type=str, default="parkour",

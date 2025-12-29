@@ -98,18 +98,18 @@ unitree_ros_to_real/unitree_legged_msgs/CMakeFiles/unitree_legged_msgs_generate_
 
 /home/zzf/RL/unitree_rl/devel/include/unitree_legged_msgs/HighCmd.h: /opt/ros/noetic/lib/gencpp/gen_cpp.py
 /home/zzf/RL/unitree_rl/devel/include/unitree_legged_msgs/HighCmd.h: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/HighCmd.msg
-/home/zzf/RL/unitree_rl/devel/include/unitree_legged_msgs/HighCmd.h: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/BmsCmd.msg
 /home/zzf/RL/unitree_rl/devel/include/unitree_legged_msgs/HighCmd.h: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/LED.msg
+/home/zzf/RL/unitree_rl/devel/include/unitree_legged_msgs/HighCmd.h: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/BmsCmd.msg
 /home/zzf/RL/unitree_rl/devel/include/unitree_legged_msgs/HighCmd.h: /opt/ros/noetic/share/gencpp/msg.h.template
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/zzf/RL/unitree_rl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Generating C++ code from unitree_legged_msgs/HighCmd.msg"
 	cd /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs && /home/zzf/RL/unitree_rl/build/catkin_generated/env_cached.sh /usr/bin/python3 /opt/ros/noetic/share/gencpp/cmake/../../../lib/gencpp/gen_cpp.py /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/HighCmd.msg -Iunitree_legged_msgs:/home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg -Istd_msgs:/opt/ros/noetic/share/std_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/noetic/share/geometry_msgs/cmake/../msg -Isensor_msgs:/opt/ros/noetic/share/sensor_msgs/cmake/../msg -p unitree_legged_msgs -o /home/zzf/RL/unitree_rl/devel/include/unitree_legged_msgs -e /opt/ros/noetic/share/gencpp/cmake/..
 
 /home/zzf/RL/unitree_rl/devel/include/unitree_legged_msgs/HighState.h: /opt/ros/noetic/lib/gencpp/gen_cpp.py
 /home/zzf/RL/unitree_rl/devel/include/unitree_legged_msgs/HighState.h: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/HighState.msg
-/home/zzf/RL/unitree_rl/devel/include/unitree_legged_msgs/HighState.h: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/MotorState.msg
 /home/zzf/RL/unitree_rl/devel/include/unitree_legged_msgs/HighState.h: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/Cartesian.msg
-/home/zzf/RL/unitree_rl/devel/include/unitree_legged_msgs/HighState.h: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/IMU.msg
+/home/zzf/RL/unitree_rl/devel/include/unitree_legged_msgs/HighState.h: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/MotorState.msg
 /home/zzf/RL/unitree_rl/devel/include/unitree_legged_msgs/HighState.h: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/BmsState.msg
+/home/zzf/RL/unitree_rl/devel/include/unitree_legged_msgs/HighState.h: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/IMU.msg
 /home/zzf/RL/unitree_rl/devel/include/unitree_legged_msgs/HighState.h: /opt/ros/noetic/share/gencpp/msg.h.template
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/zzf/RL/unitree_rl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Generating C++ code from unitree_legged_msgs/HighState.msg"
 	cd /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs && /home/zzf/RL/unitree_rl/build/catkin_generated/env_cached.sh /usr/bin/python3 /opt/ros/noetic/share/gencpp/cmake/../../../lib/gencpp/gen_cpp.py /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/HighState.msg -Iunitree_legged_msgs:/home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg -Istd_msgs:/opt/ros/noetic/share/std_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/noetic/share/geometry_msgs/cmake/../msg -Isensor_msgs:/opt/ros/noetic/share/sensor_msgs/cmake/../msg -p unitree_legged_msgs -o /home/zzf/RL/unitree_rl/devel/include/unitree_legged_msgs -e /opt/ros/noetic/share/gencpp/cmake/..
@@ -128,18 +128,18 @@ unitree_ros_to_real/unitree_legged_msgs/CMakeFiles/unitree_legged_msgs_generate_
 
 /home/zzf/RL/unitree_rl/devel/include/unitree_legged_msgs/LowCmd.h: /opt/ros/noetic/lib/gencpp/gen_cpp.py
 /home/zzf/RL/unitree_rl/devel/include/unitree_legged_msgs/LowCmd.h: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/LowCmd.msg
-/home/zzf/RL/unitree_rl/devel/include/unitree_legged_msgs/LowCmd.h: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/MotorCmd.msg
 /home/zzf/RL/unitree_rl/devel/include/unitree_legged_msgs/LowCmd.h: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/BmsCmd.msg
+/home/zzf/RL/unitree_rl/devel/include/unitree_legged_msgs/LowCmd.h: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/MotorCmd.msg
 /home/zzf/RL/unitree_rl/devel/include/unitree_legged_msgs/LowCmd.h: /opt/ros/noetic/share/gencpp/msg.h.template
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/zzf/RL/unitree_rl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Generating C++ code from unitree_legged_msgs/LowCmd.msg"
 	cd /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs && /home/zzf/RL/unitree_rl/build/catkin_generated/env_cached.sh /usr/bin/python3 /opt/ros/noetic/share/gencpp/cmake/../../../lib/gencpp/gen_cpp.py /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/LowCmd.msg -Iunitree_legged_msgs:/home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg -Istd_msgs:/opt/ros/noetic/share/std_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/noetic/share/geometry_msgs/cmake/../msg -Isensor_msgs:/opt/ros/noetic/share/sensor_msgs/cmake/../msg -p unitree_legged_msgs -o /home/zzf/RL/unitree_rl/devel/include/unitree_legged_msgs -e /opt/ros/noetic/share/gencpp/cmake/..
 
 /home/zzf/RL/unitree_rl/devel/include/unitree_legged_msgs/LowState.h: /opt/ros/noetic/lib/gencpp/gen_cpp.py
 /home/zzf/RL/unitree_rl/devel/include/unitree_legged_msgs/LowState.h: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/LowState.msg
-/home/zzf/RL/unitree_rl/devel/include/unitree_legged_msgs/LowState.h: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/MotorState.msg
 /home/zzf/RL/unitree_rl/devel/include/unitree_legged_msgs/LowState.h: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/Cartesian.msg
-/home/zzf/RL/unitree_rl/devel/include/unitree_legged_msgs/LowState.h: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/IMU.msg
+/home/zzf/RL/unitree_rl/devel/include/unitree_legged_msgs/LowState.h: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/MotorState.msg
 /home/zzf/RL/unitree_rl/devel/include/unitree_legged_msgs/LowState.h: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/BmsState.msg
+/home/zzf/RL/unitree_rl/devel/include/unitree_legged_msgs/LowState.h: /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/IMU.msg
 /home/zzf/RL/unitree_rl/devel/include/unitree_legged_msgs/LowState.h: /opt/ros/noetic/share/gencpp/msg.h.template
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/zzf/RL/unitree_rl/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Generating C++ code from unitree_legged_msgs/LowState.msg"
 	cd /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs && /home/zzf/RL/unitree_rl/build/catkin_generated/env_cached.sh /usr/bin/python3 /opt/ros/noetic/share/gencpp/cmake/../../../lib/gencpp/gen_cpp.py /home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg/LowState.msg -Iunitree_legged_msgs:/home/zzf/RL/unitree_rl/src/unitree_ros_to_real/unitree_legged_msgs/msg -Istd_msgs:/opt/ros/noetic/share/std_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/noetic/share/geometry_msgs/cmake/../msg -Isensor_msgs:/opt/ros/noetic/share/sensor_msgs/cmake/../msg -p unitree_legged_msgs -o /home/zzf/RL/unitree_rl/devel/include/unitree_legged_msgs -e /opt/ros/noetic/share/gencpp/cmake/..

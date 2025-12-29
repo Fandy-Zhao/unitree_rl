@@ -504,7 +504,7 @@ def main(args):
 
 if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(allow_abbrev=False)
 
     parser.add_argument("--logdir", type=str, default='/home/zzf/RL/unitree_rl/src/rl/traced', help="The directory which contains the config.json and model_*.pt files")
     
