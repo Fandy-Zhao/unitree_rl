@@ -9,6 +9,7 @@ from unitree_legged_msgs.msg import (
 from std_msgs.msg import Float32MultiArray, Header, String
 import json
 import struct
+from geometry_msgs.msg import Vector3, WrenchStamped
 
 # 根据架构添加模块路径
 if os.uname().machine in ["x86_64", "amd64"]:
@@ -162,6 +163,11 @@ class UnitreeRosReal:
         self.low_state_topic = low_state_topic
         # self.low_cmd_topic = low_cmd_topic if not dryrun else low_cmd_topic + "_dryrun_" + str(np.random.randint(0, 65535))
         self.low_cmd_topic = low_cmd_topic
+        self.FL_force_topic = "/visual/FL_foot_contact/the_force"
+        self.FR_force_topic = "/visual/FR_foot_contact/the_force"
+        self.RL_force_topic = "/visual/BL_foot_contact/the_force"
+        self.RR_force_topic = "/visual/BR_foot_contact/the_force"
+
         
         # self.joy_stick_topic = joy_stick_topic
         self.depth_data_topic = depth_data_topic
@@ -196,7 +202,9 @@ class UnitreeRosReal:
         self.xyyaw_command = torch.tensor([[0, 0, 0]], device= self.model_device, dtype= torch.float32)
         self.contact_filt = torch.ones((1, 4), device= self.model_device, dtype= torch.float32)
         self.last_contact_filt = torch.ones((1, 4), device= self.model_device, dtype= torch.float32)
+        
 
+        
         self.parse_config()
         self.init_stand_config()
         
@@ -206,6 +214,12 @@ class UnitreeRosReal:
         self.depth_data = Float32MultiArray()
         
         self.low_cmd_buffer = LowCmd()
+        
+        self.FL_force = Vector3()
+        self.FR_force = Vector3()
+        self.RL_force = Vector3()
+        self.RR_force = Vector3()
+        self.force = [1,1,1,1]
 
     def init_stand_config(self):
         self.startPos = [0.0] * 12
@@ -322,7 +336,32 @@ class UnitreeRosReal:
             self._low_state_callback,
             queue_size=1
         )
-        rospy.loginfo("Low state subscriber started, waiting to receive low state messages.")
+        
+        rospy.Subscriber(
+            self.FL_force_topic,
+            WrenchStamped,
+            self.FL_force_callback,
+            queue_size=1
+        )
+        rospy.Subscriber(
+            self.RL_force_topic,
+            WrenchStamped,
+            self.RL_force_callback,
+            queue_size=1
+        )
+        rospy.Subscriber(
+            self.FR_force_topic,
+            WrenchStamped,
+            self.FR_force_callback,
+            queue_size=1
+        )
+        rospy.Subscriber(
+            self.RR_force_topic,
+            WrenchStamped,
+            self.RR_force_callback,
+            queue_size=1
+        )
+        rospy.loginfo("Wireless controller subscriber started, waiting to receive wireless controller messages.")
 
         # ROS Noetic中，Unitree API的消息格式可能需要调整
         # self.sport_state_pub = rospy.Publisher(
@@ -374,7 +413,29 @@ class UnitreeRosReal:
     def _depth_data_callback(self, msg):
         self.depth_data = torch.tensor(msg.data, dtype=torch.float32).reshape(1, 58, 87).to(self.model_device)
 
-    
+    def FL_force_callback(self, msg):
+        if msg.wrench.force.x != 0 or msg.wrench.force.y != 0 or msg.wrench.force.z != 0:
+            self.force[0] = 0.5
+        else:
+            self.force[0] = -0.5
+    def RL_force_callback(self, msg):
+        if msg.wrench.force.x != 0 or msg.wrench.force.y != 0 or msg.wrench.force.z != 0:
+            self.force[1] = 0.5
+        else:
+            self.force[1] = -0.5
+    def FR_force_callback(self, msg):
+        if msg.wrench.force.x != 0 or msg.wrench.force.y != 0 or msg.wrench.force.z != 0:
+            self.force[2] = 0.5
+        else:
+            self.force[2] = -0.5
+    def RR_force_callback(self, msg):
+        if msg.wrench.force.x != 0 or msg.wrench.force.y != 0 or msg.wrench.force.z != 0:
+            self.force[3] = 0.5
+        else:
+            self.force[3] = -0.5
+        
+        
+        
     def _sport_mode_change(self, mode):
         msg = String()
         # 在ROS Noetic中，我们需要根据实际的API格式构造消息
@@ -508,10 +569,12 @@ class UnitreeRosReal:
 
     def _get_contact_filt_obs(self):
         for i in range(4):
-            if self.low_state_buffer.footForce[i] < 25:
-                self.contact_filt[:, i] = -0.5
-            else:
-                self.contact_filt[:, i] = 0.5
+            # if self.low_state_buffer.footForce[i] < 25:
+            #     self.contact_filt[:, i] = -0.5
+            # else:
+            #     self.contact_filt[:, i] = 0.5
+            self.contact_filt[:, i] = self.force[i]
+        
         return self.contact_filt
 
     def _get_depth_image(self):

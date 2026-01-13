@@ -237,10 +237,11 @@ void State_RL::run()
         _lowCmd->motorCmd[j].mode = 10;
         _lowCmd->motorCmd[j].q = (1 - this->_percent_1) * this->_last_targetPos_rl[j] + this->_percent_1 * this->_targetPos_rl[j];
         _lowCmd->motorCmd[j].dq = 0;
-        _lowCmd->motorCmd[j].Kp = this->Kp;  // TODO: 记得改一下值
-        _lowCmd->motorCmd[j].Kd = this->Kd;
+        // _lowCmd->motorCmd[j].Kp = this->Kp;  // TODO: 记得改一下值
+        // _lowCmd->motorCmd[j].Kd = this->Kd;
+        _lowCmd->motorCmd[j].Kp = 20;  // TODO: 记得改一下值
+        _lowCmd->motorCmd[j].Kd = 1;
         _lowCmd->motorCmd[j].tau = 0;
-
         this->_last_targetPos_rl[j] = _targetPos_rl[j];
     }
 

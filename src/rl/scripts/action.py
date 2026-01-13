@@ -129,6 +129,9 @@ class Action(UnitreeRosReal):
                     self.last_depth_image = depth_image
                 if self.depth_encode:
                     self.depth_latent_yaw = self.depth_encode(self.last_depth_image, proprio)
+                    # print(f'self.depth_latent_yaw.shape: {self.depth_latent_yaw.shape}')
+                    # yaw = self.depth_latent_yaw[:,-2:]
+                    # proprio[:,6:8] = yaw
                 self.last_depth_image = depth_image
                 
             get_obs_time = time.time()
@@ -136,7 +139,8 @@ class Action(UnitreeRosReal):
             if self.turn_obs:
                 obs = self.turn_obs(proprio, self.depth_latent_yaw, proprio_history,
                                   self.n_proprio, self.n_depth_latent, self.n_hist_len)
-                                  
+                yaw = self.depth_latent_yaw[:,-2:]
+                obs[:,6:8] = yaw * 1.5                 
             turn_obs_time = time.time()
             
             if self.policy:
